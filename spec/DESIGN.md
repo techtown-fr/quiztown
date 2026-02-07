@@ -428,6 +428,62 @@ Aucune animation lourde
 
 [ Answer distribution ]
 
+🖥️ ÉCRAN PUBLIC — CONTRÔLES HOST (après countdown)
+
+Après la fin du countdown d'une question, l'écran de projection affiche des **contrôles host** en bas de l'écran :
+
+| Bouton | Action | Obligatoire ? |
+|--------|--------|---------------|
+| **Afficher les résultats** | Révèle la bonne réponse (highlight vert sur la barre correcte) | Non — optionnel |
+| **Question suivante** | Lance la question suivante | Oui |
+| **Classement final** | Affiché à la dernière question — lance le podium | Oui (dernière Q) |
+
+Règles :
+- Les résultats ne sont **jamais affichés automatiquement** — le host décide
+- Le host contrôle l'avancement : pas d'auto-advance entre questions
+- Les boutons apparaissent avec une animation slide-up + fond semi-transparent
+- Style glassmorphism discret, boutons larges pour usage tablette/souris
+
+🏆 PODIUM — CLASSEMENT FINAL DRAMATIQUE
+
+Le classement final utilise un **reveal progressif** pour créer du suspense :
+
+| Étape | Délai | Contenu | Animation |
+|-------|-------|---------|-----------|
+| 1 | 0.6s | Titre "Classement Final" | Scale + fade in |
+| 2 | 2s | 4ème et 5ème places | Slide up, style discret |
+| 3 | 4s | 3ème place 🥉 Bronze | Slide depuis la droite, glow bronze |
+| 4 | 6.5s | 2ème place 🥈 Argent | Slide depuis la gauche, glow argent |
+| 5 | 9s | 1er place 🥇 Or | Scale from center + spotlight doré pulsant |
+| 6 | 11s | Bouton "Rejouer" | Fade in |
+
+Couleurs médailles :
+- Or : `#FFD700`
+- Argent : `#C0C0C0`
+- Bronze : `#CD7F32`
+
+Effets visuels :
+- Le 1er a un **effet spotlight** (radial-gradient doré pulsant derrière la carte)
+- Le fond ambient s'intensifie progressivement (glow violet → doré)
+- Chaque entrée a une **bordure colorée** selon la médaille
+- Les 4ème et 5ème sont affichés en style minimal (pas de médaille)
+
+📡 MODE DEMO — SYNCHRONISATION BroadcastChannel
+
+Le mode démo utilise **BroadcastChannel API** pour synchroniser les onglets :
+
+| Page | Rôle | URL |
+|------|------|-----|
+| `/demo/screen` | **Host** — source de vérité, contrôle le quiz | Écran de projection |
+| `/demo` | **Client** — détecte le host, envoie join/answer | Vue joueur |
+
+Flux de communication :
+1. Le joueur ping le host au chargement (détection en 600ms)
+2. Si host détecté → **mode connecté** (bandeau "Connecté à l'écran")
+3. Si pas de host → **mode solo** (comportement autonome avec bots)
+4. Le host broadcast l'état (phase, question, leaderboard) à chaque changement
+5. Le joueur envoie `join` et `answer` — le host répond avec `feedback` personnel
+
 📐 RÈGLES GLOBALES UX
 
 1 action principale par écran

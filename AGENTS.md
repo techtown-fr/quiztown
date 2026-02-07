@@ -106,7 +106,7 @@ Each VoteTile uses **triple redundancy**: pictogram (shape) + color + position. 
 - **Firestore** for persistent data (quizzes, results)
 - **Realtime Database** for live sessions (low latency)
 - **Never send `isCorrect`** to players -- validate server-side
-- Firebase config via environment variables (`.env`)
+- Firebase config via environment variables (`.env`) -- supports individual keys or single JSON string (`PUBLIC_FIREBASE_CONFIG`)
 - GIF media URLs hosted on GIPHY CDN (no Firebase Storage needed for GIFs)
 
 ### Testing
@@ -132,6 +132,17 @@ Each VoteTile uses **triple redundancy**: pictogram (shape) + color + position. 
 - VoteTiles use pictograms (✕ ○ △ □) + accessible color palette for colorblind users
 - `aria-label` on all interactive elements
 - Keyboard navigation support
+
+### Demo Mode
+
+- **BroadcastChannel API** (`quiztown-demo`) syncs `/demo` (player) with `/demo/screen` (host)
+- `/demo/screen` is the **source of truth** — it manages quiz state, bots, and real players
+- `/demo` auto-detects the host via ping/pong (600ms timeout) and falls back to solo mode
+- Message types defined in `src/lib/demoBroadcast.ts`
+- **Host controls**: results are never auto-shown — host clicks "Afficher les résultats" (optional) then "Suivant"
+- **Podium reveal**: final leaderboard reveals players one by one (5→4→3 bronze→2 silver→1 gold + spotlight)
+- No framer-motion in `DemoJoinForm` (causes hydration issues with Astro) — use plain HTML elements
+- Demo data in `src/lib/demoData.ts` — 5 bot players, 5 quiz questions
 
 ## Key Specs
 

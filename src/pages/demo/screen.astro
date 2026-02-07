@@ -1,0 +1,19 @@
+---
+import GameLayout from '../../layouts/GameLayout.astro';
+import DemoPublicScreen from '../../islands/DemoPublicScreen';
+import { getLangFromUrl } from '../../i18n';
+
+const lang = getLangFromUrl(Astro.url);
+---
+
+<GameLayout title="QuizTown - Demo Screen">
+  <DemoPublicScreen lang={lang} client:load />
+</GameLayout>
+
+<style is:global>
+  /* Override game-body for full-screen projection */
+  .game-body {
+    overflow: hidden !important;
+    height: 100vh;
+  }
+</style>

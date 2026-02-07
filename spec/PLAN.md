@@ -310,7 +310,7 @@ sequenceDiagram
 
 - [x] Mettre à jour `README.md` avec instructions complètes :
   - Prérequis (Node 20+, Firebase CLI, compte Firebase)
-  - Variables d'environnement (`.env.example`)
+  - Variables d'environnement (`.env.example`) -- simplified with optional JSON config
   - `npm run dev` / `npm run build` / `npm run preview`
   - `npm test` / `npm run test:coverage`
   - `firebase deploy` (Hosting)

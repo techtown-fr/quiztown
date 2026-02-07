@@ -3,15 +3,24 @@ import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getDatabase, type Database } from 'firebase/database';
 
-const firebaseConfig = {
-  apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
-  authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.PUBLIC_FIREBASE_APP_ID,
-  databaseURL: import.meta.env.PUBLIC_FIREBASE_DATABASE_URL,
+const getFirebaseConfig = () => {
+  if (import.meta.env.PUBLIC_FIREBASE_CONFIG) {
+    try {
+      return JSON.parse(import.meta.env.PUBLIC_FIREBASE_CONFIG);
+    } catch (e) {
+      console.error('Error parsing PUBLIC_FIREBASE_CONFIG', e);
+    }
+  }
+
+  return {
+    apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
+    authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
+    databaseURL: import.meta.env.PUBLIC_FIREBASE_DATABASE_URL,
+  };
 };
+
+const firebaseConfig = getFirebaseConfig();
 
 let app: FirebaseApp;
 let auth: Auth;

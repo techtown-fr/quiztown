@@ -1,0 +1,19 @@
+---
+import GameLayout from '../../layouts/GameLayout.astro';
+import DemoSession from '../../islands/DemoSession';
+import { getLangFromUrl } from '../../i18n';
+
+const lang = getLangFromUrl(Astro.url);
+---
+
+<GameLayout title="QuizTown - Demo">
+  <DemoSession lang={lang} client:load />
+</GameLayout>
+
+<style is:global>
+  /* Override game-body overflow for demo page */
+  .game-body {
+    overflow: auto !important;
+    height: 100dvh;
+  }
+</style>

@@ -80,10 +80,10 @@ Copy `.env.example` to `.env` and fill in your values:
 PUBLIC_FIREBASE_API_KEY=your-api-key
 PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
 PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
-PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
-PUBLIC_FIREBASE_APP_ID=1:123456789:web:abc123
 PUBLIC_FIREBASE_DATABASE_URL=https://your-project-default-rtdb.firebaseio.com
+
+# Alternatively, you can use a single JSON string:
+# PUBLIC_FIREBASE_CONFIG='{"apiKey":"...","authDomain":"...","projectId":"...","databaseURL":"..."}'
 
 # GIPHY (optional -- enables GIF search in quiz editor)
 PUBLIC_GIPHY_API_KEY=your-giphy-api-key
