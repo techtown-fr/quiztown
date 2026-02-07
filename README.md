@@ -11,7 +11,9 @@ QuizTown is a real-time interactive quiz platform designed for conferences, comp
 - **Leaderboard** -- Animated rankings based on speed + accuracy.
 - **Host Control Deck** -- Start, pause, skip questions. Monitor participation live.
 - **Public Screen** -- Projection-optimized 16:9 display with giant text and vote bars.
-- **Quiz Studio** -- Create and manage quizzes with multiple-choice questions, images, and code snippets.
+- **Quiz Studio** -- Create and manage quizzes with multiple-choice questions, GIFs, images, and code snippets.
+- **GIF Search** -- Built-in GIPHY search to add animated GIFs to questions (Kahoot-style).
+- **Emoji Picker** -- Quick emoji insertion in question text.
 - **Multilingual** -- French and English support.
 - **Dark Mode** -- Automatic dark mode support via system preference.
 - **PWA** -- Installable on mobile devices.
@@ -71,9 +73,10 @@ The dev server starts at `http://localhost:4321`.
 
 ## Environment Variables
 
-Copy `.env.example` to `.env` and fill in your Firebase config:
+Copy `.env.example` to `.env` and fill in your values:
 
 ```
+# Firebase (required)
 PUBLIC_FIREBASE_API_KEY=your-api-key
 PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
 PUBLIC_FIREBASE_PROJECT_ID=your-project-id
@@ -81,7 +84,12 @@ PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
 PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
 PUBLIC_FIREBASE_APP_ID=1:123456789:web:abc123
 PUBLIC_FIREBASE_DATABASE_URL=https://your-project-default-rtdb.firebaseio.com
+
+# GIPHY (optional -- enables GIF search in quiz editor)
+PUBLIC_GIPHY_API_KEY=your-giphy-api-key
 ```
+
+> **GIPHY API key**: Create a free account at [developers.giphy.com](https://developers.giphy.com/), then create an app to get an API key. The free tier is sufficient (no credit card needed). If omitted, the GIF picker will still open but search results will be empty.
 
 ## Firebase Setup
 
@@ -144,6 +152,7 @@ src/
 ├── components/    # Astro components (static)
 ├── islands/       # React islands (interactive)
 │   └── ui/        # Design system components
+├── lib/           # External API helpers (GIPHY)
 ├── firebase/      # Firebase SDK helpers
 ├── hooks/         # Custom React hooks
 ├── i18n/          # Translations (FR/EN)

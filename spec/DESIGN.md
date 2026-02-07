@@ -35,7 +35,7 @@ Countdown Ring visible
 
 2 à 4 VoteTiles max
 
-Couleurs distinctes par réponse
+Couleurs distinctes par réponse + pictogrammes (✕ ○ △ □)
 
 Interactions :
 
@@ -123,8 +123,57 @@ Contraste AA
 
 Texte scalable
 
-Feedback couleur + texte
+Feedback couleur + texte + forme (jamais la couleur seule)
 
+### Accessibilité des VoteTiles -- Couleurs & Pictogrammes
+
+Les 4 tuiles de réponse utilisent un système **triple redondance** : **forme (pictogramme) + couleur + position**. Cela garantit la lisibilité pour les daltoniens (protanopie, deutéranopie, tritanopie) et respecte WCAG 2.1 "Use of Color" (1.4.1).
+
+#### Pictogrammes PlayStation
+
+Chaque tuile est identifiée par un pictogramme inspiré des boutons PlayStation, immédiatement reconnaissable :
+
+| Tuile | Pictogramme | Symbole Unicode | SVG fallback |
+|-------|-------------|-----------------|--------------|
+| A     | ✕ Croix     | U+2715          | Oui          |
+| B     | ○ Cercle    | U+25CB          | Oui          |
+| C     | △ Triangle  | U+25B3          | Oui          |
+| D     | □ Carré     | U+25A1          | Oui          |
+
+Le pictogramme est affiché dans le badge coloré à gauche du texte de réponse (32×32px) ET en label d'accessibilité (`aria-label`).
+
+#### Palette VoteTiles accessible
+
+Les couleurs actuelles (Blue, Coral, Mint, Violet) posent problème pour les daltoniens : Coral et Mint sont quasi identiques en protanopie/deutéranopie. Nouvelle palette optimisée avec **variation de luminance ET de teinte** :
+
+| Tuile | Pictogramme | Couleur         | Hex       | Token CSS                | Luminance relative |
+|-------|-------------|-----------------|-----------|--------------------------|-------------------|
+| A     | ✕ Croix     | Bleu            | `#2563EB` | `--color-tile-cross`     | Moyenne-basse     |
+| B     | ○ Cercle    | Orange          | `#F59E0B` | `--color-tile-circle`    | Haute             |
+| C     | △ Triangle  | Vert émeraude   | `#10B981` | `--color-tile-triangle`  | Moyenne           |
+| D     | □ Carré     | Rose            | `#EC4899` | `--color-tile-square`    | Moyenne-haute     |
+
+**Pourquoi ces couleurs ?**
+- **Bleu** (#2563EB) : visible par tous les types de daltonisme
+- **Orange** (#F59E0B) : luminance très haute, distinct du bleu et du vert même en protanopie/deutéranopie (remplace Coral)
+- **Vert émeraude** (#10B981) : teinte plus sombre et saturée que le Mint (#2DD4BF), bien distinct de l'orange par luminance
+- **Rose** (#EC4899) : teinte chaude distincte du bleu et du vert, bien séparé de l'orange par la teinte
+
+#### Simulation daltonisme
+
+| Type          | Bleu ✕  | Orange ○ | Vert △  | Rose □  | Distinguable ? |
+|---------------|---------|----------|---------|---------|----------------|
+| Vision normale| Bleu    | Orange   | Vert    | Rose    | ✓              |
+| Protanopie    | Bleu    | Jaune    | Brun    | Gris    | ✓ (luminance)  |
+| Deutéranopie  | Bleu    | Jaune    | Olive   | Gris    | ✓ (luminance)  |
+| Tritanopie    | Bleu    | Rose     | Vert    | Rose    | ✓ (+ formes)   |
+
+#### Règles d'affichage
+
+- Le pictogramme est **toujours visible** (pas masqué au survol ou à la sélection)
+- Sur l'écran public (projection 16:9), les pictogrammes sont affichés en **48×48px minimum**
+- En mode sombre, les couleurs restent identiques (bon contraste sur `--color-dark-slate`)
+- Les barres de vote sur l'écran public reprennent le même code couleur + pictogramme
 
 Passons à du détail 
 
@@ -215,19 +264,23 @@ Countdown Ring (top)
 
 Question en très gros
 
-VoteTiles (boutons larges)
+VoteTiles (boutons larges, avec pictogrammes ✕ ○ △ □)
 
 États VoteTile
 
-Default
+Default (pictogramme + couleur + texte)
 
 Hover (web)
 
-Selected
+Selected (fond plein couleur tile, pictogramme blanc)
 
-Locked
+Locked (opacité réduite, pictogramme visible)
 
-Correct / Incorrect
+Correct / Incorrect (vert succès / rouge erreur, pictogramme toujours visible)
+
+Identification des tuiles
+
+Chaque tuile combine 3 identifiants : **pictogramme** (✕ ○ △ □) + **couleur** (bleu, orange, vert, rose) + **position** (grille 2×2). Voir section "Accessibilité des VoteTiles" pour les détails couleurs et daltonisme.
 
 Règles UX
 
@@ -323,10 +376,10 @@ Branding discret
 ÉCRAN B — VOTES EN TEMPS RÉEL
 [ Question ]
 
-[ Bar A ███████ 42% ]
-[ Bar B █████ 31% ]
-[ Bar C ███ 18% ]
-[ Bar D █ 9% ]
+[ ✕ Bar A ███████ 42% ]  (Bleu #2563EB)
+[ ○ Bar B █████ 31% ]    (Orange #F59E0B)
+[ △ Bar C ███ 18% ]      (Vert #10B981)
+[ □ Bar D █ 9% ]         (Rose #EC4899)
 
 Règles
 
@@ -334,7 +387,7 @@ Barres animées
 
 % qui montent progressivement
 
-Couleurs distinctes
+Chaque barre préfixée par son pictogramme (✕ ○ △ □) + couleur associée
 
 ÉCRAN C — RÉSULTAT
 [ Correct Answer Highlighted ]

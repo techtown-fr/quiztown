@@ -61,9 +61,25 @@ Soft White #F8FAFC (fond app)
 
 Alert Coral #FB7185 (erreur / tension quiz)
 
+Couleurs VoteTiles (accessibles daltonisme)
+
+Bleu ✕ #2563EB (Croix)
+→ identique au Electric Blue, luminance moyenne-basse
+
+Orange ○ #F59E0B (Cercle)
+→ luminance haute, remplace le Coral pour meilleur contraste daltonien
+
+Vert émeraude △ #10B981 (Triangle)
+→ luminance moyenne, remplace le Mint (trop clair, confondable avec Coral en protanopie)
+
+Rose □ #EC4899 (Carré)
+→ luminance moyenne-haute, distinct du bleu et du vert pour tous types de daltonisme
+
 🎯 Règle clé :
 
 1 couleur dominante par écran, les autres servent de feedback.
+
+🎯 Règle accessibilité : jamais la couleur seule pour identifier une réponse. Toujours forme + couleur + position.
 
 ✍️ TYPOGRAPHIE (APP-FRIENDLY)
 Titre / Branding
@@ -207,6 +223,21 @@ Texte large pour écrans de conf
 Mode sombre natif
 
 Langue adaptable (FR / EN)
+
+**Daltonisme & identification des réponses :**
+
+Chaque VoteTile utilise un système **triple redondance** (forme + couleur + position) pour ne jamais reposer sur la couleur seule (WCAG 2.1 § 1.4.1).
+
+Pictogrammes PlayStation : ✕ (Croix), ○ (Cercle), △ (Triangle), □ (Carré)
+
+Palette VoteTiles optimisée (variation luminance + teinte) :
+
+| Tuile | Pictogramme | Couleur       | Hex       | Token CSS              |
+|-------|-------------|---------------|-----------|------------------------|
+| A     | ✕ Croix     | Bleu          | `#2563EB` | `--color-tile-cross`   |
+| B     | ○ Cercle    | Orange        | `#F59E0B` | `--color-tile-circle`  |
+| C     | △ Triangle  | Vert émeraude | `#10B981` | `--color-tile-triangle`|
+| D     | □ Carré     | Rose          | `#EC4899` | `--color-tile-square`  |
 
 📐 TECH / SPECS (POUR LA SUITE)
 

@@ -20,6 +20,10 @@ export interface PlayerResponse {
 export interface CurrentQuestion {
   id: string;
   label: string;
+  media?: {
+    type: string;
+    url: string;
+  };
   options: Array<{
     id: string;
     text: string;

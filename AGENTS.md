@@ -17,6 +17,8 @@ QuizTown is a real-time interactive quiz platform for conferences, companies, an
 - **Cloud Firestore** -- Quiz storage, results, history
 - **Firebase Realtime Database** -- Live engine (sessions, votes, scores)
 - **Firebase Hosting** -- Deployment
+- **GIPHY API** (`@giphy/js-fetch-api`) -- GIF search for quiz questions
+- **emoji-picker-react** -- Emoji picker in quiz editor (React 19 compatible)
 - **Vitest** + **React Testing Library** -- Unit tests
 
 ## Architecture Rules
@@ -34,6 +36,7 @@ QuizTown is a real-time interactive quiz platform for conferences, companies, an
 - **React Islands**: `PascalCase.tsx` (e.g., `PlayerBuzzer.tsx`) in `src/islands/`
 - **React UI components**: `PascalCase.tsx` in `src/islands/ui/`
 - **Hooks**: `camelCase.ts` (e.g., `useSession.ts`) in `src/hooks/`
+- **Lib helpers**: `camelCase.ts` in `src/lib/` (e.g., `giphy.ts`)
 - **Firebase helpers**: `camelCase.ts` in `src/firebase/`
 - **Types**: `camelCase.ts` in `src/types/`
 - **Tests**: mirror source structure in `tests/`
@@ -56,6 +59,22 @@ QuizTown is a real-time interactive quiz platform for conferences, companies, an
 | `--color-dark-slate`     | `#0F172A` | Dark backgrounds         |
 | `--color-soft-white`     | `#F8FAFC` | Light backgrounds        |
 | `--color-alert-coral`    | `#FB7185` | Error, tension           |
+
+### VoteTile Colors (Colorblind-Accessible)
+
+Each VoteTile uses **triple redundancy**: pictogram (shape) + color + position. Never rely on color alone.
+
+| Tile | Pictogram   | Token                  | Value     |
+| ---- | ----------- | ---------------------- | --------- |
+| A    | ✕ Cross     | `--color-tile-cross`   | `#2563EB` |
+| B    | ○ Circle    | `--color-tile-circle`  | `#F59E0B` |
+| C    | △ Triangle  | `--color-tile-triangle`| `#10B981` |
+| D    | □ Square    | `--color-tile-square`  | `#EC4899` |
+
+- Pictograms are PlayStation-inspired (✕ ○ △ □), rendered as Unicode with SVG fallback
+- Colors chosen for **luminance variance** across all color blindness types (protanopia, deuteranopia, tritanopia)
+- Pictogram always visible in the 32×32px badge (48×48px on projection screens)
+- `aria-label` must include the pictogram name (e.g., "Answer A - Cross")
 
 ### Typography
 
@@ -88,6 +107,7 @@ QuizTown is a real-time interactive quiz platform for conferences, companies, an
 - **Realtime Database** for live sessions (low latency)
 - **Never send `isCorrect`** to players -- validate server-side
 - Firebase config via environment variables (`.env`)
+- GIF media URLs hosted on GIPHY CDN (no Firebase Storage needed for GIFs)
 
 ### Testing
 
@@ -108,7 +128,9 @@ QuizTown is a real-time interactive quiz platform for conferences, companies, an
 
 - Minimum AA contrast ratio
 - Large text for projection screens
-- Color + text feedback (never color alone)
+- Color + shape + text feedback (never color alone) -- WCAG 2.1 § 1.4.1
+- VoteTiles use pictograms (✕ ○ △ □) + accessible color palette for colorblind users
+- `aria-label` on all interactive elements
 - Keyboard navigation support
 
 ## Key Specs

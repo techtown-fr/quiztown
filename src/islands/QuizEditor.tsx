@@ -1,5 +1,9 @@
-import React, { useState } from 'react';
-import type { QuizQuestion, QuizOption } from '../types/quiz';
+import React, { useState, useRef, lazy, Suspense } from 'react';
+import type { QuizQuestion, QuizOption, QuizMedia } from '../types/quiz';
+import { TILE_PICTOGRAMS, TILE_COLORS } from './ui/VoteTile';
+
+const GifPicker = lazy(() => import('./ui/GifPicker'));
+const EmojiPickerPopover = lazy(() => import('./ui/EmojiPickerPopover'));
 
 interface Props {
   lang: 'fr' | 'en';
@@ -35,6 +39,9 @@ const labels = {
     timeLimit: 'Temps (s)',
     save: 'Sauvegarder',
     remove: 'Supprimer',
+    addGif: 'GIF',
+    emoji: 'Emoji',
+    removeMedia: 'Supprimer le média',
   },
   en: {
     title: 'Quiz title',
@@ -50,6 +57,9 @@ const labels = {
     timeLimit: 'Time (s)',
     save: 'Save',
     remove: 'Remove',
+    addGif: 'GIF',
+    emoji: 'Emoji',
+    removeMedia: 'Remove media',
   },
 };
 
@@ -58,6 +68,9 @@ export default function QuizEditor({ lang, onSave }: Props) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [questions, setQuestions] = useState<QuizQuestion[]>([EMPTY_QUESTION()]);
+  const [gifPickerIndex, setGifPickerIndex] = useState<number | null>(null);
+  const [emojiPickerIndex, setEmojiPickerIndex] = useState<number | null>(null);
+  const emojiButtonRefs = useRef<Map<number, HTMLButtonElement>>(new Map());
 
   const addQuestion = () => {
     setQuestions((prev) => [...prev, EMPTY_QUESTION()]);
@@ -96,12 +109,31 @@ export default function QuizEditor({ lang, onSave }: Props) {
     onSave?.(title, description, questions);
   };
 
-  const optionColors = [
-    'var(--color-electric-blue)',
-    'var(--color-alert-coral)',
-    'var(--color-mint-pop)',
-    'var(--color-violet-pulse)',
-  ];
+  const handleGifSelect = (qIndex: number, url: string, alt: string): void => {
+    const media: QuizMedia = { type: 'gif', url, alt };
+    updateQuestion(qIndex, 'media', media);
+    setGifPickerIndex(null);
+  };
+
+  const handleRemoveMedia = (qIndex: number): void => {
+    updateQuestion(qIndex, 'media', undefined);
+  };
+
+  const handleEmojiSelect = (qIndex: number, emoji: string): void => {
+    const currentLabel = questions[qIndex].label;
+    updateQuestion(qIndex, 'label', currentLabel + emoji);
+    setEmojiPickerIndex(null);
+  };
+
+  const setEmojiButtonRef = (index: number, el: HTMLButtonElement | null): void => {
+    if (el) {
+      emojiButtonRefs.current.set(index, el);
+    } else {
+      emojiButtonRefs.current.delete(index);
+    }
+  };
+
+  const optionColors = TILE_COLORS.map((c) => c.bg);
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '2rem 1rem' }}>
@@ -165,13 +197,97 @@ export default function QuizEditor({ lang, onSave }: Props) {
             </div>
           </div>
 
-          <input
-            type="text"
-            value={question.label}
-            onChange={(e) => updateQuestion(qIndex, 'label', e.target.value)}
-            placeholder={t.questionPlaceholder}
-            style={{ ...inputStyle, fontSize: '1.1rem', fontWeight: 600, marginBottom: '1rem' }}
-          />
+          {/* Question input + media buttons */}
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.75rem' }}>
+            <input
+              type="text"
+              value={question.label}
+              onChange={(e) => updateQuestion(qIndex, 'label', e.target.value)}
+              placeholder={t.questionPlaceholder}
+              style={{ ...inputStyle, fontSize: '1.1rem', fontWeight: 600, margin: 0, flex: 1 }}
+            />
+            <button
+              onClick={() => setGifPickerIndex(qIndex)}
+              style={mediaBtnStyle}
+              title={t.addGif}
+              type="button"
+            >
+              🎬 {t.addGif}
+            </button>
+            <div style={{ position: 'relative' }}>
+              <button
+                ref={(el) => setEmojiButtonRef(qIndex, el)}
+                onClick={() => setEmojiPickerIndex(emojiPickerIndex === qIndex ? null : qIndex)}
+                style={mediaBtnStyle}
+                title={t.emoji}
+                type="button"
+              >
+                😀
+              </button>
+              {emojiPickerIndex === qIndex && (
+                <Suspense fallback={null}>
+                  <EmojiPickerPopover
+                    lang={lang}
+                    onSelect={(emoji) => handleEmojiSelect(qIndex, emoji)}
+                    onClose={() => setEmojiPickerIndex(null)}
+                    anchorRef={{ current: emojiButtonRefs.current.get(qIndex) ?? null }}
+                  />
+                </Suspense>
+              )}
+            </div>
+          </div>
+
+          {/* Media preview */}
+          {question.media?.url && (
+            <div
+              style={{
+                position: 'relative',
+                marginBottom: '1rem',
+                borderRadius: 'var(--radius-button)',
+                overflow: 'hidden',
+                background: 'rgba(15,23,42,0.03)',
+                border: '2px solid rgba(15,23,42,0.08)',
+                display: 'inline-block',
+                maxWidth: '100%',
+              }}
+            >
+              <img
+                src={question.media.url}
+                alt={question.media.alt ?? ''}
+                style={{
+                  display: 'block',
+                  maxHeight: 200,
+                  maxWidth: '100%',
+                  objectFit: 'contain',
+                  borderRadius: 'var(--radius-button)',
+                }}
+              />
+              <button
+                onClick={() => handleRemoveMedia(qIndex)}
+                style={{
+                  position: 'absolute',
+                  top: 6,
+                  right: 6,
+                  width: 28,
+                  height: 28,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'rgba(15,23,42,0.7)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: 'var(--radius-full)',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                }}
+                title={t.removeMedia}
+                type="button"
+              >
+                ✕
+              </button>
+            </div>
+          )}
 
           {/* Options */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
@@ -190,14 +306,24 @@ export default function QuizEditor({ lang, onSave }: Props) {
                 }}
               >
                 <div
+                  aria-hidden="true"
                   style={{
-                    width: 12,
-                    height: 12,
-                    borderRadius: '50%',
+                    width: 24,
+                    height: 24,
+                    borderRadius: 6,
                     background: optionColors[oIndex],
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 700,
+                    fontSize: '0.8rem',
+                    lineHeight: 1,
                     flexShrink: 0,
                   }}
-                />
+                >
+                  {TILE_PICTOGRAMS[oIndex]?.symbol}
+                </div>
                 <input
                   type="text"
                   value={option.text}
@@ -229,6 +355,17 @@ export default function QuizEditor({ lang, onSave }: Props) {
           {t.save}
         </button>
       </div>
+
+      {/* GIF Picker Modal */}
+      {gifPickerIndex !== null && (
+        <Suspense fallback={null}>
+          <GifPicker
+            lang={lang}
+            onSelect={(url, alt) => handleGifSelect(gifPickerIndex, url, alt)}
+            onClose={() => setGifPickerIndex(null)}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }
@@ -293,4 +430,19 @@ const removeBtnStyle: React.CSSProperties = {
   cursor: 'pointer',
   fontSize: '1.2rem',
   fontWeight: 700,
+};
+
+const mediaBtnStyle: React.CSSProperties = {
+  padding: '0.5rem 0.75rem',
+  fontFamily: 'var(--font-display)',
+  fontWeight: 600,
+  fontSize: '0.8rem',
+  background: 'rgba(15,23,42,0.04)',
+  color: 'var(--color-dark-slate)',
+  border: '2px solid rgba(15,23,42,0.1)',
+  borderRadius: 'var(--radius-button)',
+  cursor: 'pointer',
+  transition: 'border-color 0.15s, background 0.15s',
+  whiteSpace: 'nowrap',
+  flexShrink: 0,
 };

@@ -5,8 +5,9 @@ export interface QuizOption {
 }
 
 export interface QuizMedia {
-  type: 'image' | 'video';
+  type: 'image' | 'gif' | 'video';
   url: string;
+  alt?: string;
 }
 
 export interface QuizQuestion {

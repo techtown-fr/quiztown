@@ -3,24 +3,36 @@ import { motion } from 'framer-motion';
 
 export type VoteTileState = 'default' | 'selected' | 'locked' | 'correct' | 'incorrect';
 
+/** PlayStation-inspired pictograms for each tile (colorblind-accessible) */
+export const TILE_PICTOGRAMS = [
+  { symbol: '✕', name: 'cross', ariaFr: 'Croix', ariaEn: 'Cross' },
+  { symbol: '○', name: 'circle', ariaFr: 'Cercle', ariaEn: 'Circle' },
+  { symbol: '△', name: 'triangle', ariaFr: 'Triangle', ariaEn: 'Triangle' },
+  { symbol: '□', name: 'square', ariaFr: 'Carré', ariaEn: 'Square' },
+] as const;
+
+/** Colorblind-accessible palette with luminance variance across all CVD types */
+export const TILE_COLORS = [
+  { bg: '#2563EB', light: 'rgba(37, 99, 235, 0.15)' },    // Blue  (✕ Cross)
+  { bg: '#F59E0B', light: 'rgba(245, 158, 11, 0.15)' },    // Orange (○ Circle)
+  { bg: '#10B981', light: 'rgba(16, 185, 129, 0.15)' },     // Emerald (△ Triangle)
+  { bg: '#EC4899', light: 'rgba(236, 72, 153, 0.15)' },     // Pink  (□ Square)
+];
+
 interface Props {
   label: string;
   text: string;
   state: VoteTileState;
   colorIndex: number;
   disabled?: boolean;
+  lang?: 'fr' | 'en';
   onClick?: () => void;
 }
 
-const TILE_COLORS = [
-  { bg: '#2563EB', light: 'rgba(37, 99, 235, 0.15)' },   // Blue
-  { bg: '#FB7185', light: 'rgba(251, 113, 133, 0.15)' },  // Coral
-  { bg: '#2DD4BF', light: 'rgba(45, 212, 191, 0.15)' },   // Mint
-  { bg: '#7C3AED', light: 'rgba(124, 58, 237, 0.15)' },   // Violet
-];
-
-export default function VoteTile({ label, text, state, colorIndex, disabled, onClick }: Props) {
+export default function VoteTile({ label, text, state, colorIndex, disabled, lang = 'fr', onClick }: Props) {
   const color = TILE_COLORS[colorIndex % TILE_COLORS.length];
+  const pictogram = TILE_PICTOGRAMS[colorIndex % TILE_PICTOGRAMS.length];
+  const pictogramLabel = lang === 'fr' ? pictogram.ariaFr : pictogram.ariaEn;
 
   const getStateStyles = (): React.CSSProperties => {
     switch (state) {
@@ -56,6 +68,7 @@ export default function VoteTile({ label, text, state, colorIndex, disabled, onC
       whileTap={state === 'default' ? 'tap' : undefined}
       animate={state === 'correct' ? 'correct' : state === 'incorrect' ? 'incorrect' : undefined}
       variants={variants}
+      aria-label={`${lang === 'fr' ? 'Réponse' : 'Answer'} ${label} - ${pictogramLabel}: ${text}`}
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -74,6 +87,7 @@ export default function VoteTile({ label, text, state, colorIndex, disabled, onC
       }}
     >
       <span
+        aria-hidden="true"
         style={{
           width: 32,
           height: 32,
@@ -85,11 +99,12 @@ export default function VoteTile({ label, text, state, colorIndex, disabled, onC
           color: 'white',
           fontFamily: 'var(--font-display)',
           fontWeight: 700,
-          fontSize: '0.9rem',
+          fontSize: '1rem',
           flexShrink: 0,
+          lineHeight: 1,
         }}
       >
-        {label}
+        {pictogram.symbol}
       </span>
       <span>{text}</span>
     </motion.button>

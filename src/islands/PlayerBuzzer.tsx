@@ -18,6 +18,8 @@ interface Props {
   onTimeUp?: () => void;
 }
 
+import { TILE_PICTOGRAMS } from './ui/VoteTile';
+
 const LABELS = ['A', 'B', 'C', 'D'];
 
 export default function PlayerBuzzer({
@@ -120,6 +122,7 @@ export default function PlayerBuzzer({
             state={getState(option.id)}
             colorIndex={index}
             disabled={isLocked}
+            lang={lang}
             onClick={() => handleSelect(option.id)}
           />
         ))}

@@ -47,6 +47,12 @@
   --color-bg-dark: #0F172A;
   --color-bg-light: #F8FAFC;
 
+  /* VoteTile Colors (colorblind-accessible, triple redundancy: shape + color + position) */
+  --color-tile-cross: #2563EB;     /* ✕ Blue - low-medium luminance */
+  --color-tile-circle: #F59E0B;    /* ○ Orange - high luminance */
+  --color-tile-triangle: #10B981;  /* △ Emerald - medium luminance */
+  --color-tile-square: #EC4899;    /* □ Pink - medium-high luminance */
+
   /* Spacing (8px grid) */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;

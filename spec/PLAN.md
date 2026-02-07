@@ -62,7 +62,11 @@ quiztown/
 │   │       ├── CountdownRing.tsx
 │   │       ├── XPBadge.tsx
 │   │       ├── LeaderboardRow.tsx
-│   │       └── Timer.tsx
+│   │       ├── Timer.tsx
+│   │       ├── GifPicker.tsx          # Modal recherche GIF (GIPHY)
+│   │       └── EmojiPickerPopover.tsx # Popover emoji-mart
+│   ├── lib/                            # Helpers externes
+│   │   └── giphy.ts                   # Wrapper API GIPHY (search, trending)
 │   ├── firebase/                      # Firebase SDK + helpers
 │   │   ├── config.ts
 │   │   ├── auth.ts
@@ -132,6 +136,12 @@ Le fichier `src/styles/global.css` définira les tokens du design system QuizTow
   --color-soft-white: #F8FAFC;
   --color-alert-coral: #FB7185;
 
+  /* Couleurs VoteTiles (accessibles daltonisme) */
+  --color-tile-cross: #2563EB;     /* ✕ Bleu - luminance moyenne-basse */
+  --color-tile-circle: #F59E0B;    /* ○ Orange - luminance haute */
+  --color-tile-triangle: #10B981;  /* △ Vert émeraude - luminance moyenne */
+  --color-tile-square: #EC4899;    /* □ Rose - luminance moyenne-haute */
+
   /* Typographie */
   --font-display: 'Space Grotesk', sans-serif;
   --font-body: 'Inter', sans-serif;
@@ -169,7 +179,7 @@ Conforme au schéma [TECH.md](TECH.md) : `metadata`, `settings`, `questions[]` a
 ```
 sessions/{sessionId}/
   ├── status: "lobby" | "question" | "leaderboard" | "finished"
-  ├── currentQuestion: { id, label, options[], timeLimit }
+  ├── currentQuestion: { id, label, media?, options[], timeLimit }
   ├── players/
   │   └── {playerId}: { nickname, badge, score, streak }
   └── responses/
@@ -272,7 +282,7 @@ sequenceDiagram
 
 - [x] **Vitest** + **React Testing Library** + **jsdom** configurés
 - [x] Tests hooks : `useCountdown` (timer, pause, expiration), `useLeaderboard` (tri, top 5)
-- [ ] Tests composants UI : `VoteTile`, `CountdownRing`, `JoinForm`, `Leaderboard`
+- [ ] Tests composants UI : ~~`VoteTile`~~, `CountdownRing`, `JoinForm`, `Leaderboard` (`VoteTile` ✓ -- 26 tests pictogrammes, accessibilité, palette, états, interactions)
 - [x] Tests logique métier : scoring (vitesse + exactitude), state machine session (transitions valides/invalides)
 - [ ] Mocks Firebase (Realtime DB, Firestore, Auth)
 - [x] Scripts npm : `npm test`, `npm run test:watch`, `npm run test:coverage`
@@ -284,6 +294,16 @@ sequenceDiagram
 - [x] PWA manifest
 - [ ] Performance audit (< 300ms animations)
 - [ ] Tests accessibilité (contraste AA)
+- [x] **Accessibilité daltonisme -- VoteTiles** :
+  - [x] Remplacer la palette VoteTile (Coral/Mint problématiques) par palette accessible : Bleu `#2563EB`, Orange `#F59E0B`, Vert émeraude `#10B981`, Rose `#EC4899`
+  - [x] Ajouter les tokens CSS : `--color-tile-cross`, `--color-tile-circle`, `--color-tile-triangle`, `--color-tile-square` dans `global.css`
+  - [x] Ajouter les pictogrammes PlayStation (✕ ○ △ □) dans le badge de chaque VoteTile (32×32px, 48×48px en projection)
+  - [x] Mettre à jour `VoteTile.tsx` : remplacer `TILE_COLORS` par nouvelle palette + pictogrammes SVG/Unicode
+  - [x] Mettre à jour `QuizEditor.tsx` : afficher pictogrammes au lieu des cercles colorés (12×12px actuel)
+  - [x] Mettre à jour `PlayerBuzzer.tsx` : passer les pictogrammes aux VoteTiles
+  - [x] Mettre à jour `PublicScreen.tsx` : barres de vote avec pictogramme + couleur accessible
+  - [x] Ajouter `aria-label` sur chaque VoteTile incluant le pictogramme (ex: "Réponse A - Croix")
+  - [ ] Valider le contraste des nouvelles couleurs sur fond clair ET fond sombre
 - [x] Firebase Security Rules (Firestore + RTDB)
 
 ### Phase 9 : Documentation deploy + CI/CD
@@ -297,14 +317,33 @@ sequenceDiagram
   - Configuration projet Firebase (Firestore rules, RTDB rules, Auth providers)
 - [x] GitHub Actions CI/CD : lint, test, build, deploy on push to main
 
+### Phase 10 : Media (GIF + Emoji)
+
+- [ ] Étendre `QuizMedia` : ajouter type `'gif'`, champ `alt` optionnel
+- [ ] Ajouter `media` optionnel à `CurrentQuestion` (session.ts)
+- [ ] Installer `@giphy/js-fetch-api`, `emoji-picker-react`
+- [ ] Créer `src/lib/giphy.ts` -- wrapper API GIPHY (search, trending, rating:g)
+- [ ] Créer `GifPicker.tsx` -- modal recherche GIF (grille, trending, attribution GIPHY)
+- [ ] Créer `EmojiPickerPopover.tsx` -- popover emoji-picker-react (thème QuizTown, i18n FR/EN)
+- [ ] Mettre à jour `QuizEditor.tsx` -- boutons GIF/Emoji, prévisualisation, suppression
+- [ ] Mettre à jour `PlayerBuzzer.tsx` -- afficher media (GIF/image) au-dessus des VoteTiles
+- [ ] Mettre à jour `PublicScreen.tsx` -- afficher media en grand (projection 16:9)
+- [ ] Propager media dans session RTDB (`setCurrentQuestion`)
+- [ ] Labels i18n FR/EN pour tous les nouveaux textes
+- [ ] `PUBLIC_GIPHY_API_KEY` dans `.env.example`
+
 ---
 
 ## Points différenciants "qui déchire"
 
 - **Countdown Ring SVG animé** qui passe du vert au rouge avec micro-vibration à 3 secondes
 - **VoteTiles avec spring animations** (Framer Motion) -- scale au tap, shake quand incorrect, confetti quand correct
+- **Pictogrammes PlayStation (✕ ○ △ □)** -- identification visuelle par forme + couleur + position, accessible aux daltoniens
+- **Palette VoteTiles optimisée daltonisme** -- Bleu/Orange/Vert émeraude/Rose avec variation de luminance forte, fini les confusions Coral/Mint
 - **Leaderboard "bounce"** -- les positions remontent/descendent avec des animations physiques
 - **Haptic feedback** sur mobile (navigator.vibrate) au tap sur les réponses
 - **Gradient pulse** sur la waiting room (ambiance "ville qui s'active")
 - **QR Code** instantané pour rejoindre -- zéro friction, zéro compte
 - **Mode projection 16:9** -- texte géant, branding discret, lisible à 20m
+- **GIF intégré façon Kahoot** -- recherche GIPHY avec rating:g, picker fluide, rendu plein écran sur projecteur
+- **Emoji picker** -- insertion rapide d'emoji dans les questions, recherche i18n FR/EN

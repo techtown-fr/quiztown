@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import CountdownRing from './ui/CountdownRing';
+import { TILE_PICTOGRAMS, TILE_COLORS } from './ui/VoteTile';
 
 interface VoteBar {
   label: string;
@@ -9,8 +10,14 @@ interface VoteBar {
   isCorrect?: boolean;
 }
 
+interface QuestionMedia {
+  type: string;
+  url: string;
+}
+
 interface Props {
   question: string;
+  media?: QuestionMedia;
   timeLeft: number;
   timeLimit: number;
   voteBars: VoteBar[];
@@ -18,15 +25,11 @@ interface Props {
   totalVotes: number;
 }
 
-const BAR_COLORS = [
-  'var(--color-electric-blue)',
-  'var(--color-alert-coral)',
-  'var(--color-mint-pop)',
-  'var(--color-violet-pulse)',
-];
+const BAR_COLORS = TILE_COLORS.map((c) => c.bg);
 
 export default function PublicScreen({
   question,
+  media,
   timeLeft,
   timeLimit,
   voteBars,
@@ -79,6 +82,31 @@ export default function PublicScreen({
         {question}
       </motion.h1>
 
+      {/* Media (GIF/Image) */}
+      {media?.url && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.15 }}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginBottom: 'clamp(1.5rem, 3vw, 3rem)',
+          }}
+        >
+          <img
+            src={media.url}
+            alt=""
+            style={{
+              maxHeight: '40vh',
+              maxWidth: '80%',
+              objectFit: 'contain',
+              borderRadius: 'var(--radius-card)',
+            }}
+          />
+        </motion.div>
+      )}
+
       {/* Vote Bars */}
       <div
         style={{
@@ -92,8 +120,9 @@ export default function PublicScreen({
       >
         {voteBars.map((bar, index) => (
           <div key={bar.label} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            {/* Label */}
+            {/* Label with pictogram */}
             <span
+              aria-label={`${bar.label} - ${TILE_PICTOGRAMS[index]?.name ?? ''}`}
               style={{
                 width: 'clamp(36px, 4vw, 56px)',
                 height: 'clamp(36px, 4vw, 56px)',
@@ -103,11 +132,12 @@ export default function PublicScreen({
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontWeight: 700,
-                fontSize: 'clamp(1rem, 2vw, 1.5rem)',
+                fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)',
                 flexShrink: 0,
+                lineHeight: 1,
               }}
             >
-              {bar.label}
+              {TILE_PICTOGRAMS[index]?.symbol ?? bar.label}
             </span>
 
             {/* Bar */}
