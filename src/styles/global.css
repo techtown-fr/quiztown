@@ -1,0 +1,149 @@
+@import "tailwindcss";
+
+/* ============================================
+   QuizTown Design Tokens
+   ============================================ */
+
+@theme {
+  /* Primary Colors */
+  --color-electric-blue: #2563EB;
+  --color-violet-pulse: #7C3AED;
+  --color-mint-pop: #2DD4BF;
+
+  /* Secondary Colors */
+  --color-dark-slate: #0F172A;
+  --color-soft-white: #F8FAFC;
+  --color-alert-coral: #FB7185;
+
+  /* Semantic aliases */
+  --color-primary: #2563EB;
+  --color-secondary: #7C3AED;
+  --color-success: #2DD4BF;
+  --color-error: #FB7185;
+  --color-bg-dark: #0F172A;
+  --color-bg-light: #F8FAFC;
+
+  /* Typography */
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+/* ============================================
+   CSS Custom Properties (non-Tailwind tokens)
+   ============================================ */
+
+:root {
+  /* Colors (duplicated from @theme for inline style access) */
+  --color-electric-blue: #2563EB;
+  --color-violet-pulse: #7C3AED;
+  --color-mint-pop: #2DD4BF;
+  --color-dark-slate: #0F172A;
+  --color-soft-white: #F8FAFC;
+  --color-alert-coral: #FB7185;
+  --color-primary: #2563EB;
+  --color-secondary: #7C3AED;
+  --color-success: #2DD4BF;
+  --color-error: #FB7185;
+  --color-bg-dark: #0F172A;
+  --color-bg-light: #F8FAFC;
+
+  /* Spacing (8px grid) */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+
+  /* Radius */
+  --radius-card: 16px;
+  --radius-button: 12px;
+  --radius-full: 9999px;
+
+  /* Animations */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+
+  /* Shadows */
+  --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-card-hover: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-glow-blue: 0 0 20px rgb(37 99 235 / 0.3);
+  --shadow-glow-violet: 0 0 20px rgb(124 58 237 / 0.3);
+  --shadow-glow-mint: 0 0 20px rgb(45 212 191 / 0.3);
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/SpaceGrotesk-Variable.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/Inter-Variable.woff2') format('woff2');
+}
+
+html {
+  font-family: var(--font-body);
+  color: var(--color-dark-slate);
+  background-color: var(--color-soft-white);
+  scroll-behavior: smooth;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* ============================================
+   Reduced Motion
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================
+   Dark Mode
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    color: var(--color-soft-white);
+    background-color: var(--color-dark-slate);
+  }
+}
+
+/* ============================================
+   Responsive Utilities
+   ============================================ */
+
+/* Projection screen: optimize for 16:9 large screens */
+@media (min-width: 1920px) {
+  html {
+    font-size: 20px;
+  }
+}

@@ -1,0 +1,18 @@
+---
+import GameLayout from '../../layouts/GameLayout.astro';
+import JoinForm from '../../islands/JoinForm';
+import { getLangFromUrl } from '../../i18n';
+
+const { id } = Astro.params;
+const lang = getLangFromUrl(Astro.url);
+
+// For static builds, we pre-render a demo page; 
+// real sessions use the Firebase rewrite to serve this page
+export function getStaticPaths() {
+  return [{ params: { id: 'demo' } }];
+}
+---
+
+<GameLayout title="QuizTown - Join">
+  <JoinForm sessionId={id ?? 'demo'} lang={lang} client:load />
+</GameLayout>

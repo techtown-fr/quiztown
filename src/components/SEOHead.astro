@@ -1,0 +1,47 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  pageType?: 'website' | 'article';
+}
+
+const { title, description, ogImage, pageType = 'website' } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const siteUrl = 'https://quiztown.techtown.fr';
+const currentUrl = new URL(Astro.url.pathname, siteUrl).href;
+
+const metaTitle = title ?? t('seo.title');
+const metaDescription = description ?? t('seo.description');
+const metaOgImage = new URL(ogImage ?? '/images/quiztown-og.png', siteUrl).href;
+---
+
+<title>{metaTitle}</title>
+<meta name="description" content={metaDescription} />
+<meta name="keywords" content={t('seo.keywords')} />
+<meta name="robots" content="index, follow" />
+
+<!-- Open Graph -->
+<meta property="og:title" content={metaTitle} />
+<meta property="og:description" content={metaDescription} />
+<meta property="og:type" content={pageType} />
+<meta property="og:url" content={currentUrl} />
+<meta property="og:image" content={metaOgImage} />
+<meta property="og:site_name" content="QuizTown" />
+<meta property="og:locale" content={lang === 'fr' ? 'fr_FR' : 'en_US'} />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={metaTitle} />
+<meta name="twitter:description" content={metaDescription} />
+<meta name="twitter:image" content={metaOgImage} />
+
+<!-- Canonical & i18n -->
+<link rel="canonical" href={currentUrl} />
+{lang === 'fr' && <link rel="alternate" hreflang="en" href={`${siteUrl}/en${Astro.url.pathname}`} />}
+{lang === 'en' && <link rel="alternate" hreflang="fr" href={Astro.url.pathname.replace('/en', '') || '/'} />}
+<link rel="alternate" hreflang="x-default" href={`${siteUrl}${Astro.url.pathname.replace('/en', '') || '/'}`} />

@@ -1,0 +1,22 @@
+---
+import GameLayout from '../../layouts/GameLayout.astro';
+import PublicScreen from '../../islands/PublicScreen';
+
+const { id } = Astro.params;
+
+export function getStaticPaths() {
+  return [{ params: { id: 'demo' } }];
+}
+---
+
+<GameLayout title="QuizTown - Live Screen">
+  <PublicScreen
+    question="Waiting for the next question..."
+    timeLeft={0}
+    timeLimit={0}
+    voteBars={[]}
+    showResults={false}
+    totalVotes={0}
+    client:load
+  />
+</GameLayout>

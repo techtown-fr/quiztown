@@ -1,0 +1,55 @@
+---
+import SEOHead from '../components/SEOHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  pageType?: 'website' | 'article';
+  hideHeader?: boolean;
+  hideFooter?: boolean;
+}
+
+const { title, description, ogImage, pageType, hideHeader = false, hideFooter = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang={Astro.currentLocale ?? 'fr'}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2563EB" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <link rel="icon" type="image/svg+xml" href="/images/quiztown-logo.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="anonymous" />
+
+    <SEOHead title={title} description={description} ogImage={ogImage} pageType={pageType} />
+  </head>
+  <body>
+    {!hideHeader && <Header />}
+
+    <main>
+      <slot />
+    </main>
+
+    {!hideFooter && <Footer />}
+  </body>
+</html>
+
+<style is:global>
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1;
+  }
+</style>

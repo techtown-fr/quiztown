@@ -1,0 +1,12 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import QuizEditor from '../../islands/QuizEditor';
+import { getLangFromUrl, useTranslations } from '../../i18n';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<Layout title={`${t('host.create.title')} - QuizTown`}>
+  <QuizEditor lang={lang} client:load />
+</Layout>

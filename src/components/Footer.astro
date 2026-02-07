@@ -1,0 +1,68 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<footer class="footer">
+  <div class="footer-inner">
+    <p class="footer-brand">
+      <span class="footer-logo">Q</span>
+      QuizTown
+    </p>
+    <p class="footer-tagline">{t('footer.tagline')}</p>
+    <p class="footer-powered">{t('footer.powered')}</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    text-align: center;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .footer { border-top-color: rgba(248, 250, 252, 0.08); }
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .footer-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, var(--color-electric-blue), var(--color-violet-pulse));
+    color: white;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+
+  .footer-tagline {
+    font-size: 0.85rem;
+    opacity: 0.6;
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .footer-powered {
+    font-size: 0.75rem;
+    opacity: 0.4;
+  }
+</style>

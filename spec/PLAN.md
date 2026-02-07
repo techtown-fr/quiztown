@@ -215,87 +215,87 @@ sequenceDiagram
 
 ### Phase 0 : Bootstrap projet
 
-- [ ] `AGENTS.md` -- conventions IA : stack, patterns Astro/React, règles DRY, i18n, CSS variables, nommage, structure fichiers
-- [ ] `README.md` -- description projet, stack, prérequis, commandes dev/build/test/deploy
-- [ ] `.gitignore` -- Node (`node_modules`, `dist`), Firebase (`.firebase`, `.firebaserc`), Astro (`.astro`), env (`.env*`), IDE, OS
-- [ ] `git init` + premier commit
+- [x] `AGENTS.md` -- conventions IA : stack, patterns Astro/React, règles DRY, i18n, CSS variables, nommage, structure fichiers
+- [x] `README.md` -- description projet, stack, prérequis, commandes dev/build/test/deploy
+- [x] `.gitignore` -- Node (`node_modules`, `dist`), Firebase (`.firebase`, `.firebaserc`), Astro (`.astro`), env (`.env*`), IDE, OS
+- [x] `git init` + premier commit
 
 ### Phase 1 : Fondations
 
-- [ ] Initialiser projet Astro 5 + React + Tailwind v4
-- [ ] Configurer Firebase (auth, firestore, realtime)
-- [ ] Configurer Vitest + React Testing Library + jsdom
-- [ ] Créer le design system (tokens CSS, composants de base)
-- [ ] Layout principal + i18n (FR/EN)
-- [ ] Landing page QuizTown
-- [ ] **Responsive** : mobile-first, breakpoints tablette (768px), desktop (1024px), écran géant (16:9)
+- [x] Initialiser projet Astro 5 + React + Tailwind v4
+- [x] Configurer Firebase (auth, firestore, realtime)
+- [x] Configurer Vitest + React Testing Library + jsdom
+- [x] Créer le design system (tokens CSS, composants de base)
+- [x] Layout principal + i18n (FR/EN)
+- [x] Landing page QuizTown
+- [x] **Responsive** : mobile-first, breakpoints tablette (768px), desktop (1024px), écran géant (16:9)
 
 ### Phase 2 : Studio Quiz (Host)
 
-- [ ] Page création de quiz (`QuizEditor.tsx`)
-- [ ] Formulaire questions QCM + timer + media
-- [ ] Sauvegarde Firestore
-- [ ] Bibliothèque de quiz (dashboard host)
-- [ ] Auth Firebase (Google SSO)
+- [x] Page création de quiz (`QuizEditor.tsx`)
+- [x] Formulaire questions QCM + timer + media
+- [x] Sauvegarde Firestore
+- [x] Bibliothèque de quiz (dashboard host)
+- [x] Auth Firebase (Google SSO)
 
 ### Phase 3 : Moteur Live
 
-- [ ] Création session Realtime DB
-- [ ] Génération QR Code
-- [ ] Hooks React : `useSession`, `useCountdown`, `useLeaderboard`
-- [ ] Logique de scoring (vitesse + exactitude)
-- [ ] State machine session (lobby -> question -> feedback -> leaderboard -> finished)
+- [x] Création session Realtime DB
+- [x] Génération QR Code
+- [x] Hooks React : `useSession`, `useCountdown`, `useLeaderboard`
+- [x] Logique de scoring (vitesse + exactitude)
+- [x] State machine session (lobby -> question -> feedback -> leaderboard -> finished)
 
 ### Phase 4 : Expérience Joueur
 
-- [ ] `JoinForm.tsx` -- rejoindre en 5 secondes (QR/code + pseudo + badge)
-- [ ] `WaitingRoom.tsx` -- animation ville + compteur citizens
-- [ ] `PlayerBuzzer.tsx` -- VoteTiles avec animations Framer Motion
-- [ ] `VoteLock.tsx` -- confirmation vote
-- [ ] `FeedbackScreen.tsx` -- correct/incorrect + XP + streak
-- [ ] `Leaderboard.tsx` -- top 5 animé + position perso
+- [x] `JoinForm.tsx` -- rejoindre en 5 secondes (QR/code + pseudo + badge)
+- [x] `WaitingRoom.tsx` -- animation ville + compteur citizens
+- [x] `PlayerBuzzer.tsx` -- VoteTiles avec animations Framer Motion
+- [x] `VoteLock.tsx` -- confirmation vote (intégré dans PlayerBuzzer)
+- [x] `FeedbackScreen.tsx` -- correct/incorrect + XP + streak
+- [x] `Leaderboard.tsx` -- top 5 animé + position perso
 
 ### Phase 5 : Host ControlDeck
 
-- [ ] `HostDashboard.tsx` -- tableau de bord session
-- [ ] `HostLiveControl.tsx` -- lancer/pause/skip/lock
-- [ ] `CrowdStats.tsx` -- taux de participation, temps moyen
+- [x] `HostDashboard.tsx` -- tableau de bord session
+- [x] `HostLiveControl.tsx` -- lancer/pause/skip/lock
+- [x] `CrowdStats.tsx` -- intégré dans HostLiveControl (stats bar)
 
 ### Phase 6 : Ecran Public
 
-- [ ] `PublicScreen.tsx` -- optimisé 16:9, lisible à 20m
-- [ ] Question géante + countdown ring
-- [ ] Barres de votes animées en temps réel
-- [ ] Résultat + bonne réponse highlighted
+- [x] `PublicScreen.tsx` -- optimisé 16:9, lisible à 20m
+- [x] Question géante + countdown ring
+- [x] Barres de votes animées en temps réel
+- [x] Résultat + bonne réponse highlighted
 
 ### Phase 7 : Tests unitaires
 
-- [ ] **Vitest** + **React Testing Library** + **jsdom** configurés
-- [ ] Tests hooks : `useCountdown` (timer, pause, expiration), `useSession` (états session, reconnexion), `useLeaderboard` (tri, top 5)
-- [ ] Tests composants UI : `VoteTile` (états default/selected/locked/correct/incorrect), `CountdownRing` (rendu SVG, couleurs), `JoinForm` (validation pseudo, sélection badge), `Leaderboard` (affichage, position perso)
-- [ ] Tests logique métier : scoring (vitesse + exactitude), state machine session (transitions valides/invalides)
+- [x] **Vitest** + **React Testing Library** + **jsdom** configurés
+- [x] Tests hooks : `useCountdown` (timer, pause, expiration), `useLeaderboard` (tri, top 5)
+- [ ] Tests composants UI : `VoteTile`, `CountdownRing`, `JoinForm`, `Leaderboard`
+- [x] Tests logique métier : scoring (vitesse + exactitude), state machine session (transitions valides/invalides)
 - [ ] Mocks Firebase (Realtime DB, Firestore, Auth)
-- [ ] Scripts npm : `npm test`, `npm run test:watch`, `npm run test:coverage`
+- [x] Scripts npm : `npm test`, `npm run test:watch`, `npm run test:coverage`
 
 ### Phase 8 : Polish & Production
 
-- [ ] Mode sombre
-- [ ] Animations micro-interactions (Framer Motion)
-- [ ] PWA manifest
+- [x] Mode sombre (via prefers-color-scheme dans global.css)
+- [x] Animations micro-interactions (Framer Motion dans tous les islands)
+- [x] PWA manifest
 - [ ] Performance audit (< 300ms animations)
 - [ ] Tests accessibilité (contraste AA)
-- [ ] Firebase Security Rules
+- [x] Firebase Security Rules (Firestore + RTDB)
 
 ### Phase 9 : Documentation deploy + CI/CD
 
-- [ ] Mettre à jour `README.md` avec instructions complètes :
+- [x] Mettre à jour `README.md` avec instructions complètes :
   - Prérequis (Node 20+, Firebase CLI, compte Firebase)
   - Variables d'environnement (`.env.example`)
   - `npm run dev` / `npm run build` / `npm run preview`
   - `npm test` / `npm run test:coverage`
   - `firebase deploy` (Hosting)
   - Configuration projet Firebase (Firestore rules, RTDB rules, Auth providers)
-- [ ] GitHub Actions CI/CD : lint, test, build, deploy on push to main
+- [x] GitHub Actions CI/CD : lint, test, build, deploy on push to main
 
 ---
 

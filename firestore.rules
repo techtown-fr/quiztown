@@ -1,0 +1,19 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Quizzes: read by anyone, write only by authenticated hosts
+    match /quizzes/{quizId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null
+        && request.auth.uid == resource.data.metadata.authorId;
+    }
+
+    // Results: read by host, write by system
+    match /results/{resultId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Only Cloud Functions
+    }
+  }
+}

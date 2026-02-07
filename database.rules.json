@@ -1,0 +1,31 @@
+{
+  "rules": {
+    "sessions": {
+      "$sessionId": {
+        ".read": true,
+        "status": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "currentQuestion": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "currentQuestionIndex": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "players": {
+          "$playerId": {
+            ".write": "!data.exists() || $playerId === auth.uid || data.parent().parent().child('hostId').val() === auth.uid"
+          }
+        },
+        "responses": {
+          "$questionId": {
+            "$playerId": {
+              ".write": "$playerId === auth.uid && !data.exists()",
+              ".validate": "newData.hasChildren(['optionId', 'timestamp'])"
+            }
+          }
+        }
+      }
+    }
+  }
+}

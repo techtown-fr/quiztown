@@ -1,0 +1,25 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import HostLiveControl from '../../../islands/HostLiveControl';
+import { getLangFromUrl } from '../../../i18n';
+
+const { id } = Astro.params;
+const lang = getLangFromUrl(Astro.url);
+
+export function getStaticPaths() {
+  return [{ params: { id: 'demo' } }];
+}
+---
+
+<Layout title="ControlDeck - QuizTown">
+  <HostLiveControl
+    sessionId={id ?? 'demo'}
+    status="lobby"
+    currentQuestionIndex={-1}
+    totalQuestions={0}
+    playerCount={0}
+    responseCount={0}
+    lang={lang}
+    client:load
+  />
+</Layout>
