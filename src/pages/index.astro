@@ -30,12 +30,6 @@ const t = useTranslations(lang);
           </svg>
           {t('landing.hero.cta.host')}
         </a>
-        <a href="#join" class="btn btn--secondary">
-          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-          {t('landing.hero.cta.play')}
-        </a>
       </div>
     </div>
 
@@ -107,23 +101,6 @@ const t = useTranslations(lang);
     </div>
   </section>
 
-  <!-- Join Section -->
-  <section class="join-section" id="join">
-    <div class="join-content">
-      <h2 class="join-title">{t('join.title')}</h2>
-      <p class="join-subtitle">{t('landing.features.instant.description')}</p>
-      <div class="join-input-wrapper">
-        <input
-          type="text"
-          class="join-input"
-          placeholder={t('join.nickname.placeholder')}
-          maxlength="12"
-          id="join-code-input"
-        />
-        <button class="btn btn--primary btn--join" id="join-btn">{t('join.cta')}</button>
-      </div>
-    </div>
-  </section>
 </Layout>
 
 <style>
@@ -266,17 +243,6 @@ const t = useTranslations(lang);
 
   .btn--primary:hover {
     box-shadow: 0 0 30px rgb(37 99 235 / 0.4);
-  }
-
-  .btn--secondary {
-    background: transparent;
-    color: var(--color-electric-blue);
-    border: 2px solid var(--color-electric-blue);
-  }
-
-  .btn--secondary:hover {
-    background: var(--color-electric-blue);
-    color: white;
   }
 
   .btn-icon {
@@ -455,68 +421,4 @@ const t = useTranslations(lang);
     margin: 0;
   }
 
-  /* ===== JOIN SECTION ===== */
-  .join-section {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: var(--spacing-3xl) var(--spacing-lg);
-    text-align: center;
-  }
-
-  .join-title {
-    font-size: clamp(1.5rem, 4vw, 2.5rem);
-    margin-bottom: var(--spacing-sm);
-    background: linear-gradient(135deg, var(--color-electric-blue), var(--color-violet-pulse));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .join-subtitle {
-    opacity: 0.7;
-    margin-bottom: var(--spacing-xl);
-  }
-
-  .join-input-wrapper {
-    display: flex;
-    gap: var(--spacing-sm);
-    max-width: 400px;
-    margin: 0 auto;
-  }
-
-  @media (max-width: 480px) {
-    .join-input-wrapper {
-      flex-direction: column;
-    }
-  }
-
-  .join-input {
-    flex: 1;
-    padding: var(--spacing-md) var(--spacing-lg);
-    font-family: var(--font-body);
-    font-size: 1rem;
-    border: 2px solid rgba(15, 23, 42, 0.1);
-    border-radius: var(--radius-button);
-    background: white;
-    color: var(--color-dark-slate);
-    outline: none;
-    transition: border-color var(--duration-fast), box-shadow var(--duration-fast);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .join-input {
-      background: #1e293b;
-      color: var(--color-soft-white);
-      border-color: rgba(248, 250, 252, 0.1);
-    }
-  }
-
-  .join-input:focus {
-    border-color: var(--color-electric-blue);
-    box-shadow: var(--shadow-glow-blue);
-  }
-
-  .btn--join {
-    white-space: nowrap;
-  }
 </style>

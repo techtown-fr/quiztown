@@ -12,7 +12,7 @@ Host,Sauvegarder mes quiz dans une bibliothèque personnelle.,Les réutiliser po
 🚀 Axe 2 : Le "Lobby" & Temps Réel (Côté Joueur)
 C'est le cœur de l'expérience : la synchronisation parfaite entre l'écran géant et les téléphones.
 
-Connexion Flash : En tant que joueur, je veux rejoindre une partie via un QR Code ou un code à 6 chiffres pour ne pas perdre de temps à taper une URL.
+Connexion Flash : En tant que joueur, je veux rejoindre une partie via le QR Code ou le lien partagé par le host (pas de join depuis la landing page, il faut un ID de session).
 
 Identité TechTown : En tant que collaborateur, je veux pouvoir me connecter via le SSO de l'entreprise (Google/Microsoft/Okta) pour que mon score soit rattaché à mon profil interne.
 

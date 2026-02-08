@@ -354,11 +354,31 @@ export default function GifPicker({ lang, onSelect, onClose }: Props) {
             }}
           >
             <span>{t.poweredBy}</span>
-            <img
-              src="https://giphy.com/static/img/giphy-logo-square-180.png"
-              alt="GIPHY"
-              style={{ height: 16 }}
-            />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 164 35"
+              aria-label="GIPHY"
+              style={{ height: 14 }}
+            >
+              <g fill="none">
+                <path d="M0 3h4v29H0z" fill="#04FF8E" />
+                <path d="M0 31h16v4H0z" fill="#8E2EFF" />
+                <path d="M0 0h16v4H0z" fill="#FFF152" />
+                <path d="M12 15h4v20h-4z" fill="#00C5FF" />
+                <path d="M8 15h8v4H8z" fill="#FF6666" />
+                <path d="M12 0h4v19h-4z" fill="#00C5FF" />
+              </g>
+              <text
+                x="24"
+                y="27"
+                fontFamily="Arial Black, Arial, Helvetica, sans-serif"
+                fontWeight="900"
+                fontSize="28"
+                fill="#1a1a1a"
+              >
+                GIPHY
+              </text>
+            </svg>
             <span style={{ fontWeight: 700 }}>GIPHY</span>
           </div>
         </motion.div>

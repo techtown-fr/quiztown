@@ -1,7 +1,6 @@
 import {
   ref,
   set,
-  get,
   update,
   remove,
   onValue,
@@ -80,6 +79,16 @@ export async function leaveSession(sessionId: string, playerId: string): Promise
   await remove(playerRef);
 }
 
+export async function updatePlayerScore(
+  sessionId: string,
+  playerId: string,
+  score: number,
+  streak: number
+): Promise<void> {
+  const playerRef = ref(getFirebaseDatabase(), `sessions/${sessionId}/players/${playerId}`);
+  await update(playerRef, { score, streak });
+}
+
 // ==========================================
 // Response management
 // ==========================================
@@ -95,6 +104,20 @@ export async function submitResponse(
     `sessions/${sessionId}/responses/${questionId}/${playerId}`
   );
   await set(responseRef, response);
+}
+
+// ==========================================
+// Answer reveal
+// ==========================================
+
+export async function revealAnswer(sessionId: string, correctOptionId: string): Promise<void> {
+  const sessionRef = getSessionRef(sessionId);
+  await update(sessionRef, { correctOptionId, status: 'feedback' as SessionStatus });
+}
+
+export async function clearCorrectOption(sessionId: string): Promise<void> {
+  const sessionRef = getSessionRef(sessionId);
+  await update(sessionRef, { correctOptionId: null });
 }
 
 // ==========================================

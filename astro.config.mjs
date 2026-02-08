@@ -24,6 +24,21 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules/firebase/')) {
+              if (id.includes('/auth/')) return 'firebase-auth';
+              if (id.includes('/firestore/')) return 'firebase-firestore';
+              if (id.includes('/database/')) return 'firebase-database';
+              return 'firebase-core';
+            }
+            if (id.includes('node_modules/framer-motion')) return 'framer-motion';
+          },
+        },
+      },
+    },
   },
   i18n: {
     defaultLocale: 'fr',

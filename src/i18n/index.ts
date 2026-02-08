@@ -17,7 +17,6 @@ const translations: Record<Lang, Record<string, string>> = {
     'landing.hero.title': 'Play. Vote. Learn.',
     'landing.hero.subtitle': 'La plateforme de quiz interactifs en temps réel qui engage votre audience.',
     'landing.hero.cta.host': 'Créer un quiz',
-    'landing.hero.cta.play': 'Rejoindre une partie',
     'landing.features.title': 'Pourquoi QuizTown ?',
     'landing.features.instant.title': 'Connexion instantanée',
     'landing.features.instant.description': 'Scannez un QR code ou entrez un code. Zéro compte, zéro friction.',
@@ -54,9 +53,19 @@ const translations: Record<Lang, Record<string, string>> = {
     'leaderboard.title': 'Classement',
     'leaderboard.your.position': 'Ta position',
 
+    // Auth
+    'auth.login': 'Se connecter avec Google',
+    'auth.login.short': 'Connexion',
+    'auth.logout': 'Déconnexion',
+    'auth.login.title': 'Connexion requise',
+    'auth.login.description': 'Connectez-vous avec votre compte Google pour accéder à l\'espace organisateur.',
+    'auth.error': 'Erreur de connexion. Réessayez.',
+    'auth.welcome': 'Bonjour',
+
     // Host
     'host.dashboard.title': 'Dashboard',
     'host.create.title': 'Créer un quiz',
+    'host.edit.title': 'Modifier le quiz',
     'host.live.start': 'Démarrer',
     'host.live.pause': 'Pause',
     'host.live.skip': 'Suivant',
@@ -64,6 +73,30 @@ const translations: Record<Lang, Record<string, string>> = {
     'host.stats.participation': 'Participation',
     'host.stats.avg.time': 'Temps moyen',
     'host.stats.distribution': 'Distribution',
+
+    // Host Live Lobby
+    'host.live.scan': 'Scannez pour rejoindre',
+    'host.live.joinLink': 'Ou utilisez ce lien :',
+    'host.live.copyLink': 'Copier',
+    'host.live.copied': 'Copié !',
+    'host.live.showResults': 'Afficher les résultats',
+    'host.live.loadingQuiz': 'Chargement du quiz...',
+    'host.live.errorQuiz': 'Impossible de charger le quiz.',
+
+    // Player Session
+    'player.session.noSession': 'Aucune session trouvée.',
+    'player.session.loading': 'Connexion à la session...',
+    'player.session.error': 'Session introuvable.',
+    'player.session.joining': 'Connexion...',
+    'player.session.answerLocked': 'Vote verrouillé ! En attente des résultats...',
+    'player.session.timeUp': 'Temps écoulé !',
+    'player.session.waiting': 'Prochaine question...',
+    'player.session.finished.title': 'Quiz terminé !',
+    'player.session.finished.subtitle': 'Merci d\'avoir joué !',
+    'player.session.yourScore': 'Ton score',
+    'player.session.playAgain': 'Rejouer',
+    'player.session.backHome': 'Retour accueil',
+    'player.session.questionOf': 'Question {current} / {total}',
 
     // Footer
     'footer.powered': 'Propulsé par TechTown',
@@ -85,7 +118,6 @@ const translations: Record<Lang, Record<string, string>> = {
     'landing.hero.title': 'Play. Vote. Learn.',
     'landing.hero.subtitle': 'The real-time interactive quiz platform that engages your audience.',
     'landing.hero.cta.host': 'Create a quiz',
-    'landing.hero.cta.play': 'Join a game',
     'landing.features.title': 'Why QuizTown?',
     'landing.features.instant.title': 'Instant Join',
     'landing.features.instant.description': 'Scan a QR code or enter a short code. No account, no friction.',
@@ -122,9 +154,19 @@ const translations: Record<Lang, Record<string, string>> = {
     'leaderboard.title': 'Leaderboard',
     'leaderboard.your.position': 'Your position',
 
+    // Auth
+    'auth.login': 'Sign in with Google',
+    'auth.login.short': 'Sign in',
+    'auth.logout': 'Sign out',
+    'auth.login.title': 'Sign in required',
+    'auth.login.description': 'Sign in with your Google account to access the host dashboard.',
+    'auth.error': 'Login failed. Please try again.',
+    'auth.welcome': 'Hello',
+
     // Host
     'host.dashboard.title': 'Dashboard',
     'host.create.title': 'Create a quiz',
+    'host.edit.title': 'Edit quiz',
     'host.live.start': 'Start',
     'host.live.pause': 'Pause',
     'host.live.skip': 'Next',
@@ -132,6 +174,30 @@ const translations: Record<Lang, Record<string, string>> = {
     'host.stats.participation': 'Participation',
     'host.stats.avg.time': 'Avg. time',
     'host.stats.distribution': 'Distribution',
+
+    // Host Live Lobby
+    'host.live.scan': 'Scan to join',
+    'host.live.joinLink': 'Or use this link:',
+    'host.live.copyLink': 'Copy',
+    'host.live.copied': 'Copied!',
+    'host.live.showResults': 'Show results',
+    'host.live.loadingQuiz': 'Loading quiz...',
+    'host.live.errorQuiz': 'Failed to load quiz.',
+
+    // Player Session
+    'player.session.noSession': 'No session found.',
+    'player.session.loading': 'Connecting to session...',
+    'player.session.error': 'Session not found.',
+    'player.session.joining': 'Joining...',
+    'player.session.answerLocked': 'Vote locked! Waiting for results...',
+    'player.session.timeUp': 'Time\'s up!',
+    'player.session.waiting': 'Next question...',
+    'player.session.finished.title': 'Quiz finished!',
+    'player.session.finished.subtitle': 'Thanks for playing!',
+    'player.session.yourScore': 'Your score',
+    'player.session.playAgain': 'Play again',
+    'player.session.backHome': 'Back to home',
+    'player.session.questionOf': 'Question {current} / {total}',
 
     // Footer
     'footer.powered': 'Powered by TechTown',

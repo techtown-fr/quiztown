@@ -18,8 +18,9 @@ QuizTown is a real-time interactive quiz platform for conferences, companies, an
 - **Firebase Realtime Database** -- Live engine (sessions, votes, scores)
 - **Firebase Hosting** -- Deployment
 - **GIPHY API** (`@giphy/js-fetch-api`) -- GIF search for quiz questions
-- **emoji-picker-react** -- Emoji picker in quiz editor (React 19 compatible)
+- **qrcode** (`qrcode` + `@types/qrcode`) -- QR code generation for session join links
 - **Vitest** + **React Testing Library** -- Unit tests
+- **Playwright** -- E2E tests (quiz creation, dashboard, live sessions, player flow)
 
 ## Architecture Rules
 
@@ -40,6 +41,7 @@ QuizTown is a real-time interactive quiz platform for conferences, companies, an
 - **Firebase helpers**: `camelCase.ts` in `src/firebase/`
 - **Types**: `camelCase.ts` in `src/types/`
 - **Tests**: mirror source structure in `tests/`
+- **E2E tests**: `e2e/**/*.spec.ts`
 
 ### CSS & Styling
 
@@ -105,9 +107,44 @@ Each VoteTile uses **triple redundancy**: pictogram (shape) + color + position. 
 
 - **Firestore** for persistent data (quizzes, results)
 - **Realtime Database** for live sessions (low latency)
-- **Never send `isCorrect`** to players -- validate server-side
-- Firebase config via environment variables (`.env`) -- supports individual keys or single JSON string (`PUBLIC_FIREBASE_CONFIG`)
+- **Never send `isCorrect`** to players -- validate server-side. The `sanitizeQuestion()` function in `HostLivePage.tsx` strips `isCorrect` before pushing to RTDB
+- **Never write `undefined`** to Realtime Database -- use `null` or omit the field entirely (Firebase RTDB rejects `undefined` values)
+- Firebase config via environment variables (`.env`) -- single-line JSON string (`PUBLIC_FIREBASE_CONFIG`) is the recommended format
+- `firebase.json` declares `hosting`, `firestore` (rules), and `database` (rules) targets
 - GIF media URLs hosted on GIPHY CDN (no Firebase Storage needed for GIFs)
+- **Realtime Database URL** for European regions uses format: `https://<db-name>.<region>.firebasedatabase.app`
+
+### Auth Guard Pattern
+
+- All `/host/*` pages are protected by the `AuthGuard` React island
+- `AuthGuard` wraps page content: shows login screen if unauthenticated, user bar + children if authenticated
+- Uses `signInWithPopup` (Google SSO) -- `signInWithRedirect` has known issues with modern browsers
+- Host pages use wrapper islands to combine AuthGuard + page content:
+  - `HostDashboard` = AuthGuard + dashboard UI
+  - `HostCreatePage` = AuthGuard + QuizEditor (with Firestore save)
+  - `HostEditPage` = AuthGuard + QuizEditor in edit mode (loads quiz via `getQuiz`, pre-fills editor, uses `updateQuiz`)
+  - `HostLivePage` = AuthGuard + HostLiveControl (with wired-up session callbacks)
+- The `useAuth` hook manages auth state (`user`, `loading`, `error`, `login`, `logout`)
+- COOP warnings in the console from `signInWithPopup` are cosmetic -- authentication works correctly
+
+### Live Session Flow
+
+The live session connects Host and Players via Firebase Realtime Database:
+
+- **Host side** (`HostLivePage.tsx` + `HostLiveControl.tsx`):
+  - Session is created from `HostDashboard` (status: `lobby`)
+  - Lobby view shows QR code + join URL (generated via `qrcode` library)
+  - "Demarrer" fetches quiz from Firestore, sanitizes first question (strips `isCorrect`), pushes to RTDB
+  - Host controls: "Afficher les resultats" (reveals `correctOptionId`), "Suivant" (next question), "Terminer" (finished)
+  - Session state machine: `lobby` -> `question` -> `feedback` -> `leaderboard` -> `finished`
+- **Player side** (`PlayerSession.tsx` orchestrates `JoinForm` -> `WaitingRoom` -> `PlayerBuzzer` -> `FeedbackScreen` -> `Leaderboard`):
+  - Reads session ID from URL query param (`?session=xxx`)
+  - `JoinForm` calls `joinSession()` to register player in RTDB
+  - Listens to `onSessionChange()` for host-driven state transitions
+  - Submits answers via `submitResponse()`
+  - Feedback computed client-side when host reveals `correctOptionId`
+- **Firebase rewrites** in `firebase.json`: `/play/**` -> `/play/demo.html`, `/host/live/**` -> `/host/live.html` (serves pre-built pages for dynamic session IDs)
+- **Security**: `correctOptionId` is only written when host explicitly reveals results (never sent with the question)
 
 ### Testing
 
@@ -116,6 +153,12 @@ Each VoteTile uses **triple redundancy**: pictogram (shape) + color + position. 
 - **jsdom** environment for DOM tests
 - Mock Firebase SDK in tests
 - Test files: `tests/**/*.test.{ts,tsx}`
+- **Playwright** for E2E tests
+- E2E test files: `e2e/**/*.spec.ts`
+- Playwright config: `playwright.config.ts`
+- Runs against Astro dev server (`http://localhost:4321`)
+- Chromium only (for speed)
+- Scripts: `npm run test:e2e`, `npm run test:e2e:ui`
 
 ### Animations
 

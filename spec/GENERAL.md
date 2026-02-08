@@ -14,7 +14,7 @@ Interaction simple (mobile-first)
 
 Intelligence collective
 
-Zéro friction (scan → play)
+Zéro friction (scan QR / clic lien → play)
 
 Ton & personnalité
 

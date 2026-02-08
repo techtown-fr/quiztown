@@ -1,4 +1,10 @@
 {
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "database": {
+    "rules": "database.rules.json"
+  },
   "hosting": {
     "public": "dist",
     "ignore": [
@@ -63,6 +69,22 @@
       }
     ],
     "rewrites": [
+      {
+        "source": "/play/**",
+        "destination": "/play/demo.html"
+      },
+      {
+        "source": "/host/live/**",
+        "destination": "/host/live.html"
+      },
+      {
+        "source": "/host/edit/**",
+        "destination": "/host/edit.html"
+      },
+      {
+        "source": "/screen/**",
+        "destination": "/screen/demo.html"
+      },
       {
         "source": "!/@(api|_astro|images|fonts|*.@(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|webp|avif|json|xml|txt))",
         "destination": "/index.html"

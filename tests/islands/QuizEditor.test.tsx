@@ -29,16 +29,6 @@ vi.mock('../../src/islands/ui/GifPicker', () => ({
   ),
 }));
 
-vi.mock('../../src/islands/ui/EmojiPickerPopover', () => ({
-  default: ({ onSelect, onClose }: { onSelect: (emoji: string) => void; onClose: () => void }) => (
-    <div data-testid="emoji-picker">
-      <button data-testid="emoji-select" onClick={() => onSelect('🎉')}>
-        Select Emoji
-      </button>
-    </div>
-  ),
-}));
-
 // Mock VoteTile exports
 vi.mock('../../src/islands/ui/VoteTile', () => ({
   TILE_PICTOGRAMS: [
@@ -170,56 +160,15 @@ describe('QuizEditor -- Media features', () => {
     });
   });
 
-  describe('Emoji button', () => {
-    it('renders an emoji button for each question', () => {
-      render(<QuizEditor {...defaultProps} />);
-      const emojiButtons = screen.getAllByTitle('Emoji');
-      expect(emojiButtons).toHaveLength(1);
-    });
-
-    it('opens emoji picker when emoji button is clicked', async () => {
-      const user = userEvent.setup();
-      render(<QuizEditor {...defaultProps} />);
-
-      const emojiButton = screen.getByTitle('Emoji');
-      await user.click(emojiButton);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('emoji-picker')).toBeInTheDocument();
-      });
-    });
-
-    it('appends emoji to question label when selected', async () => {
-      const user = userEvent.setup();
-      render(<QuizEditor {...defaultProps} />);
-
-      // Type a question first
-      const questionInput = screen.getByPlaceholderText('Écris ta question ici...');
-      await user.type(questionInput, 'Test');
-
-      // Open emoji picker and select
-      await user.click(screen.getByTitle('Emoji'));
-      await waitFor(() => screen.getByTestId('emoji-picker'));
-      await user.click(screen.getByTestId('emoji-select'));
-
-      // Emoji should be appended
-      await waitFor(() => {
-        expect(questionInput).toHaveValue('Test🎉');
-      });
-    });
-  });
-
   describe('i18n labels', () => {
     it('uses French labels by default', () => {
       render(<QuizEditor {...defaultProps} />);
       expect(screen.getByTitle('GIF')).toBeInTheDocument();
-      expect(screen.getByTitle('Emoji')).toBeInTheDocument();
     });
 
     it('uses English labels when lang=en', () => {
       render(<QuizEditor {...defaultProps} lang="en" />);
       expect(screen.getByTitle('GIF')).toBeInTheDocument();
-      expect(screen.getByTitle('Emoji')).toBeInTheDocument();
     });
 
     it('shows French remove media label', async () => {

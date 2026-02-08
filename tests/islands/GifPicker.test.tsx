@@ -136,7 +136,7 @@ describe('GifPicker', () => {
 
   it('displays GIPHY attribution', async () => {
     render(<GifPicker {...defaultProps} />);
-    expect(screen.getByText('GIPHY')).toBeInTheDocument();
+    expect(screen.getAllByText('GIPHY').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('Propulsé par')).toBeInTheDocument();
   });
 

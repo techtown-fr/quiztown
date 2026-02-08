@@ -28,22 +28,44 @@ On utilise cette DB pour sa latence extrêmement faible, idéale pour un buzzer.
 
 Node sessions/{sessionID} :
 
-status : "lobby", "question_1", "leaderboard", "finished".
+status : "lobby" | "question" | "feedback" | "leaderboard" | "finished".
 
-currentQuestion : index de la question active.
+currentQuestion : { id, label, media?, options[], timeLimit, startedAt } (question active, sans `isCorrect`).
 
-players : liste des IDs connectés avec leur pseudo.
+currentQuestionIndex : index numérique de la question en cours.
 
-responses/{questionID}/{playerID} : horodatage et réponse choisie (pour calculer les points selon la vitesse).
+totalQuestions : nombre total de questions dans le quiz.
+
+correctOptionId : (optionnel) ID de la bonne réponse, écrit par le host uniquement lors du reveal.
+
+quizId : référence vers le document Firestore du quiz.
+
+hostId : UID Firebase Auth du host.
+
+players/{playerID} : { nickname, badge, score, streak, connected }.
+
+responses/{questionID}/{playerID} : { optionId, timestamp } (horodatage pour calculer les points selon la vitesse).
 
 🛠️ 2. Workflow Technique
-Préparation (Astro + Firestore) : Le Host (l'organisateur TechTown) crée son quiz sur une interface Astro protégée. Les données sont persistées dans Firestore.
+Préparation (Astro + Firestore) : Le Host crée son quiz via `QuizEditor.tsx`, les données sont persistées dans Firestore via `HostCreatePage.tsx`.
 
-Lancement (Astro Island + Realtime DB) : Quand le Host clique sur "Démarrer", Astro hydrate un composant React/Svelte qui crée une entrée dans la Realtime DB. Un QR Code est généré pour le sessionID.
+Édition (Dashboard → HostEditPage) : Depuis le dashboard, le Host clique "Modifier" sur un quiz existant. Il est redirigé vers `/host/edit?id=xxx`. Le composant `HostEditPage.tsx` charge le quiz depuis Firestore via `getQuiz(id)`, pré-remplit le `QuizEditor` avec les données existantes (`initialTitle`, `initialDescription`, `initialQuestions`), et utilise `updateQuiz()` pour sauvegarder les modifications. Le bouton affiche "Mettre à jour" au lieu de "Sauvegarder". Après la mise à jour, le Host est redirigé vers le Dashboard avec un toast de confirmation.
 
-Interaction (Player Side) : Le joueur scanne le code. Son navigateur (Astro) se connecte via un listener à la Realtime DB. Dès que le Host change status dans la DB, l'écran du joueur change instantanément.
+Lancement (HostDashboard → Realtime DB) : Depuis le dashboard, le Host clique "Lancer" : une session est créée dans la Realtime DB (status: `lobby`, quizId, hostId). Le Host est redirigé vers `/host/live/?session=xxx`.
 
-Calcul des scores : À chaque réponse, le client écrit dans la Realtime DB. Une Firebase Cloud Function peut être utilisée pour calculer les points en fonction du temps de réponse et mettre à jour le leaderboard global.
+Lobby (HostLiveControl) : Le composant `HostLiveControl.tsx` affiche un QR code (lib `qrcode`) et un lien de join (`/play/demo?session=xxx`). Les joueurs connectés apparaissent en temps réel.
+
+Démarrer (HostLivePage) : Le Host clique "Démarrer" → `HostLivePage.tsx` fetch le quiz depuis Firestore, sanitize la première question (`sanitizeQuestion()` supprime `isCorrect`), et la push dans la RTDB (status: `question`).
+
+Interaction (PlayerSession) : Le joueur scanne le QR ou ouvre le lien. `PlayerSession.tsx` orchestre le flow : `JoinForm` → `WaitingRoom` → `PlayerBuzzer` → `FeedbackScreen` → `Leaderboard`. Le composant écoute `onSessionChange()` pour les transitions host-driven.
+
+Résultats : Le Host clique "Afficher les résultats" → `revealAnswer()` écrit `correctOptionId` dans la session + status: `feedback`. Le joueur calcule son feedback client-side.
+
+Question suivante : Le Host clique "Suivant" → `clearCorrectOption()` + `setCurrentQuestion()` avec la question suivante.
+
+Fin : Le Host clique "Terminer" → status: `finished`. Le joueur voit l'écran final.
+
+Calcul des scores : À chaque réponse, le client écrit dans la Realtime DB via `submitResponse()`. Le scoring est calculé côté client (vitesse + exactitude).
 
 ✅ Pourquoi ce choix est le bon pour TechTown ?
 Performance (Astro) : Le temps de chargement initial pour un étudiant ou un participant en conférence est quasi instantané, même sur une connexion mobile instable.

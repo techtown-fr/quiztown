@@ -58,3 +58,13 @@ export async function deleteQuiz(quizId: string): Promise<void> {
   const docRef = doc(db, QUIZZES_COLLECTION, quizId);
   await deleteDoc(docRef);
 }
+
+export async function getAllQuizzes(): Promise<Quiz[]> {
+  const db = getFirebaseFirestore();
+  const q = query(
+    collection(db, QUIZZES_COLLECTION),
+    orderBy('metadata.createdAt', 'desc')
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Quiz);
+}

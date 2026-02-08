@@ -101,15 +101,15 @@ export default function PlayerBuzzer({
         </motion.h1>
       </AnimatePresence>
 
-      {/* Vote Tiles */}
+      {/* Vote Tiles -- 2x2 grid (Kahoot-style) */}
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
           gap: '0.75rem',
           flex: 1,
-          justifyContent: 'center',
-          maxWidth: 500,
+          alignContent: 'center',
+          maxWidth: 600,
           margin: '0 auto',
           width: '100%',
         }}

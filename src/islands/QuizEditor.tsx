@@ -1,13 +1,21 @@
-import React, { useState, useRef, lazy, Suspense } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import type { QuizQuestion, QuizOption, QuizMedia } from '../types/quiz';
 import { TILE_PICTOGRAMS, TILE_COLORS } from './ui/VoteTile';
 
 const GifPicker = lazy(() => import('./ui/GifPicker'));
-const EmojiPickerPopover = lazy(() => import('./ui/EmojiPickerPopover'));
+
+interface SaveResult {
+  success: boolean;
+  message: string;
+}
 
 interface Props {
   lang: 'fr' | 'en';
-  onSave?: (title: string, description: string, questions: QuizQuestion[]) => void;
+  onSave?: (title: string, description: string, questions: QuizQuestion[]) => Promise<SaveResult>;
+  /** Pre-fill the editor with existing data (edit mode) */
+  initialTitle?: string;
+  initialDescription?: string;
+  initialQuestions?: QuizQuestion[];
 }
 
 const EMPTY_OPTION: () => QuizOption = () => ({
@@ -38,10 +46,17 @@ const labels = {
     correct: 'Correcte',
     timeLimit: 'Temps (s)',
     save: 'Sauvegarder',
+    update: 'Mettre à jour',
+    saving: 'Sauvegarde...',
     remove: 'Supprimer',
     addGif: 'GIF',
-    emoji: 'Emoji',
     removeMedia: 'Supprimer le média',
+    errorTitle: 'Le titre du quiz est requis.',
+    errorQuestion: 'La question {n} n\'a pas de texte.',
+    errorNoCorrect: 'La question {n} n\'a pas de bonne réponse.',
+    errorOption: 'La question {n} a des réponses vides.',
+    successSave: 'Quiz sauvegardé avec succès !',
+    errorSave: 'Erreur lors de la sauvegarde.',
   },
   en: {
     title: 'Quiz title',
@@ -56,21 +71,41 @@ const labels = {
     correct: 'Correct',
     timeLimit: 'Time (s)',
     save: 'Save',
+    update: 'Update',
+    saving: 'Saving...',
     remove: 'Remove',
     addGif: 'GIF',
-    emoji: 'Emoji',
     removeMedia: 'Remove media',
+    errorTitle: 'Quiz title is required.',
+    errorQuestion: 'Question {n} has no text.',
+    errorNoCorrect: 'Question {n} has no correct answer.',
+    errorOption: 'Question {n} has empty answers.',
+    successSave: 'Quiz saved successfully!',
+    errorSave: 'Failed to save the quiz.',
   },
 };
 
-export default function QuizEditor({ lang, onSave }: Props) {
+interface Toast {
+  message: string;
+  type: 'success' | 'error';
+}
+
+export default function QuizEditor({ lang, onSave, initialTitle, initialDescription, initialQuestions }: Props) {
   const t = labels[lang];
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [questions, setQuestions] = useState<QuizQuestion[]>([EMPTY_QUESTION()]);
+  const isEditMode = !!(initialTitle || initialQuestions);
+  const [title, setTitle] = useState(initialTitle ?? '');
+  const [description, setDescription] = useState(initialDescription ?? '');
+  const [questions, setQuestions] = useState<QuizQuestion[]>(
+    initialQuestions && initialQuestions.length > 0 ? initialQuestions : [EMPTY_QUESTION()]
+  );
   const [gifPickerIndex, setGifPickerIndex] = useState<number | null>(null);
-  const [emojiPickerIndex, setEmojiPickerIndex] = useState<number | null>(null);
-  const emojiButtonRefs = useRef<Map<number, HTMLButtonElement>>(new Map());
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState<Toast | null>(null);
+
+  const showToast = (message: string, type: 'success' | 'error') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
 
   const addQuestion = () => {
     setQuestions((prev) => [...prev, EMPTY_QUESTION()]);
@@ -105,8 +140,34 @@ export default function QuizEditor({ lang, onSave }: Props) {
     );
   };
 
-  const handleSave = () => {
-    onSave?.(title, description, questions);
+  const validate = (): string | null => {
+    if (!title.trim()) return t.errorTitle;
+    for (let i = 0; i < questions.length; i++) {
+      const q = questions[i];
+      if (!q.label.trim()) return t.errorQuestion.replace('{n}', String(i + 1));
+      const filledOptions = q.options.filter((o) => o.text.trim());
+      if (filledOptions.length < 2) return t.errorOption.replace('{n}', String(i + 1));
+      if (!q.options.some((o) => o.isCorrect)) return t.errorNoCorrect.replace('{n}', String(i + 1));
+    }
+    return null;
+  };
+
+  const handleSave = async () => {
+    const error = validate();
+    if (error) {
+      showToast(error, 'error');
+      return;
+    }
+    if (!onSave) return;
+    setSaving(true);
+    try {
+      const result = await onSave(title, description, questions);
+      showToast(result.message, result.success ? 'success' : 'error');
+    } catch {
+      showToast(t.errorSave, 'error');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleGifSelect = (qIndex: number, url: string, alt: string): void => {
@@ -117,20 +178,6 @@ export default function QuizEditor({ lang, onSave }: Props) {
 
   const handleRemoveMedia = (qIndex: number): void => {
     updateQuestion(qIndex, 'media', undefined);
-  };
-
-  const handleEmojiSelect = (qIndex: number, emoji: string): void => {
-    const currentLabel = questions[qIndex].label;
-    updateQuestion(qIndex, 'label', currentLabel + emoji);
-    setEmojiPickerIndex(null);
-  };
-
-  const setEmojiButtonRef = (index: number, el: HTMLButtonElement | null): void => {
-    if (el) {
-      emojiButtonRefs.current.set(index, el);
-    } else {
-      emojiButtonRefs.current.delete(index);
-    }
   };
 
   const optionColors = TILE_COLORS.map((c) => c.bg);
@@ -214,27 +261,6 @@ export default function QuizEditor({ lang, onSave }: Props) {
             >
               🎬 {t.addGif}
             </button>
-            <div style={{ position: 'relative' }}>
-              <button
-                ref={(el) => setEmojiButtonRef(qIndex, el)}
-                onClick={() => setEmojiPickerIndex(emojiPickerIndex === qIndex ? null : qIndex)}
-                style={mediaBtnStyle}
-                title={t.emoji}
-                type="button"
-              >
-                😀
-              </button>
-              {emojiPickerIndex === qIndex && (
-                <Suspense fallback={null}>
-                  <EmojiPickerPopover
-                    lang={lang}
-                    onSelect={(emoji) => handleEmojiSelect(qIndex, emoji)}
-                    onClose={() => setEmojiPickerIndex(null)}
-                    anchorRef={{ current: emojiButtonRefs.current.get(qIndex) ?? null }}
-                  />
-                </Suspense>
-              )}
-            </div>
           </div>
 
           {/* Media preview */}
@@ -351,10 +377,45 @@ export default function QuizEditor({ lang, onSave }: Props) {
         <button onClick={addQuestion} style={secondaryBtnStyle}>
           {t.addQuestion}
         </button>
-        <button onClick={handleSave} style={primaryBtnStyle}>
-          {t.save}
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          style={{
+            ...primaryBtnStyle,
+            opacity: saving ? 0.7 : 1,
+            cursor: saving ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {saving ? t.saving : (isEditMode ? t.update : t.save)}
         </button>
       </div>
+
+      {/* Toast notification */}
+      {toast && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '2rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            padding: '0.85rem 1.5rem',
+            borderRadius: 'var(--radius-button)',
+            background: toast.type === 'success' ? 'var(--color-mint-pop)' : 'var(--color-alert-coral)',
+            color: toast.type === 'success' ? '#064e3b' : '#fff',
+            fontFamily: 'var(--font-display)',
+            fontWeight: 600,
+            fontSize: '0.95rem',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+            zIndex: 1000,
+            animation: 'toastIn 0.3s ease-out',
+            maxWidth: '90vw',
+            textAlign: 'center',
+          }}
+          role="alert"
+        >
+          {toast.type === 'success' ? '✓ ' : '✗ '}{toast.message}
+        </div>
+      )}
 
       {/* GIF Picker Modal */}
       {gifPickerIndex !== null && (

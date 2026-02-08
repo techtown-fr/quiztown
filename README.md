@@ -76,18 +76,22 @@ The dev server starts at `http://localhost:4321`.
 Copy `.env.example` to `.env` and fill in your values:
 
 ```
-# Firebase (required)
-PUBLIC_FIREBASE_API_KEY=your-api-key
-PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
-PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-PUBLIC_FIREBASE_DATABASE_URL=https://your-project-default-rtdb.firebaseio.com
+# Firebase (required) -- Single JSON string on one line (recommended)
+PUBLIC_FIREBASE_CONFIG={"apiKey":"...","authDomain":"...","projectId":"...","databaseURL":"...","storageBucket":"...","messagingSenderId":"...","appId":"..."}
 
-# Alternatively, you can use a single JSON string:
-# PUBLIC_FIREBASE_CONFIG='{"apiKey":"...","authDomain":"...","projectId":"...","databaseURL":"..."}'
+# Or use individual keys instead:
+# PUBLIC_FIREBASE_API_KEY=your-api-key
+# PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+# PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+# PUBLIC_FIREBASE_DATABASE_URL=https://your-project-default-rtdb.europe-west1.firebasedatabase.app
 
 # GIPHY (optional -- enables GIF search in quiz editor)
 PUBLIC_GIPHY_API_KEY=your-giphy-api-key
 ```
+
+> **Important**: The `PUBLIC_FIREBASE_CONFIG` value must be valid JSON on a **single line** (no quotes around the value, no multiline). Copy the config object directly from the Firebase Console.
+
+> **Database URL**: If your Realtime Database is in a non-default region (e.g., `europe-west1`), the URL format is `https://<db-name>.europe-west1.firebasedatabase.app` (not `firebaseio.com`).
 
 > **GIPHY API key**: Create a free account at [developers.giphy.com](https://developers.giphy.com/), then create an app to get an API key. The free tier is sufficient (no credit card needed). If omitted, the GIF picker will still open but search results will be empty.
 
@@ -97,28 +101,39 @@ PUBLIC_GIPHY_API_KEY=your-giphy-api-key
 
 Go to [Firebase Console](https://console.firebase.google.com/) and create a new project.
 
-### 2. Enable services
+### 2. Register a Web app
 
-- **Authentication**: Enable Google sign-in provider
-- **Cloud Firestore**: Create database (start in test mode, then apply rules)
-- **Realtime Database**: Create database (apply rules from `database.rules.json`)
+In the Firebase Console, go to **Project Settings > General > Your apps** and click the **Web** icon (`</>`). Register your app (e.g., "QuizTown Web") -- this gives you the Firebase SDK config needed for the `.env` file.
 
-### 3. Apply security rules
+### 3. Enable services
+
+- **Authentication**: Go to Authentication > Sign-in method, enable **Google** provider
+- **Cloud Firestore**: Create database in your preferred region
+- **Realtime Database**: Run `firebase init database` to create the database instance, choose your region (e.g., `europe-west1`)
+
+### 4. Login and associate project
 
 ```bash
 # Login to Firebase
 firebase login
 
-# Deploy Firestore rules
-firebase deploy --only firestore:rules
-
-# Deploy Realtime Database rules
-firebase deploy --only database
+# Associate your project
+firebase use --add
+# Select your project from the list
 ```
 
-### 4. Get your config
+### 5. Apply security rules
 
-In Firebase Console > Project Settings > General, copy the Firebase SDK config and paste values into your `.env` file.
+```bash
+# Deploy Firestore + Realtime Database rules
+firebase deploy --only firestore:rules,database
+```
+
+> **Note**: `firebase.json` includes both `firestore.rules` and `database.rules.json` references. These are deployed together.
+
+### 6. Get your config
+
+In Firebase Console > Project Settings > General > Your apps > Web app, copy the `firebaseConfig` object and paste it as a single-line JSON into `PUBLIC_FIREBASE_CONFIG` in your `.env` file.
 
 ## Deployment
 
@@ -137,13 +152,18 @@ firebase deploy --only hosting
 The project includes a GitHub Actions workflow (`.github/workflows/deploy.yml`) that automatically:
 
 1. Runs tests on every push and PR
-2. Builds the project
-3. Deploys to Firebase Hosting on push to `main`
+2. Builds the project with Firebase config injected from secrets
+3. Deploys Firebase security rules (Firestore + Realtime Database)
+4. Deploys to Firebase Hosting on push to `main`
 
-**Setup required GitHub Secrets:**
+**Required GitHub Secrets:**
 
-- `FIREBASE_SERVICE_ACCOUNT`: Firebase service account JSON key
-- `FIREBASE_PROJECT_ID`: Your Firebase project ID
+| Secret | Description |
+| --- | --- |
+| `FIREBASE_SERVICE_ACCOUNT` | Firebase service account JSON key |
+| `FIREBASE_PROJECT_ID` | Your Firebase project ID (e.g., `quiztown-app`) |
+| `PUBLIC_FIREBASE_CONFIG` | Firebase SDK config as single-line JSON (same as `.env`) |
+| `PUBLIC_GIPHY_API_KEY` | *(optional)* GIPHY API key for GIF search |
 
 ## Project Structure
 
@@ -169,15 +189,19 @@ tests/
 
 ## Key URLs
 
-| Route              | Description                |
-| ------------------ | -------------------------- |
-| `/`                | Landing page               |
-| `/host`            | Host dashboard             |
-| `/host/create`     | Quiz editor                |
-| `/host/live/:id`   | Host control deck          |
-| `/play/:id`        | Player join + game         |
-| `/screen/:id`      | Public projection screen   |
-| `/en/`             | English landing page       |
+| Route              | Description                              |
+| ------------------ | ---------------------------------------- |
+| `/`                | Landing page (FR)                        |
+| `/en/`             | Landing page (EN)                        |
+| `/host`            | Host dashboard (auth required)           |
+| `/host/create`     | Quiz editor (auth required)              |
+| `/host/live/:id`   | Host control deck (auth required)        |
+| `/play/:id`        | Player join + game                       |
+| `/screen/:id`      | Public projection screen                 |
+| `/demo`            | Demo player (no Firebase needed)         |
+| `/demo/screen`     | Demo projection screen (no Firebase)     |
+
+> **Auth guard**: All `/host/*` pages are protected by an `AuthGuard` React island that requires Google sign-in. Unauthenticated users see a login screen.
 
 ## Specs
 

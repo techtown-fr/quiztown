@@ -1,14 +1,14 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import HostCreatePage from '../../islands/HostCreatePage';
+import HostEditPage from '../../islands/HostEditPage';
 import { getLangFromUrl, useTranslations } from '../../i18n';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 ---
 
-<Layout title={`${t('host.create.title')} - QuizTown`}>
-  <HostCreatePage lang={lang} client:load />
+<Layout title={`${t('host.edit.title')} - QuizTown`}>
+  <HostEditPage lang={lang} client:load />
 </Layout>
 
 <style>

@@ -3,6 +3,7 @@
     "sessions": {
       "$sessionId": {
         ".read": true,
+        ".write": true,
         "status": {
           ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
         },

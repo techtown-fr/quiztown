@@ -43,6 +43,8 @@ export interface Session {
   responses: Record<string, Record<string, PlayerResponse>>;
   createdAt: number;
   hostId: string;
+  /** Set by host when revealing results -- the correct option ID for the current question */
+  correctOptionId?: string;
 }
 
 export interface SessionConfig {
