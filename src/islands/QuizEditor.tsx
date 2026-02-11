@@ -177,7 +177,13 @@ export default function QuizEditor({ lang, onSave, initialTitle, initialDescript
   };
 
   const handleRemoveMedia = (qIndex: number): void => {
-    updateQuestion(qIndex, 'media', undefined);
+    setQuestions((prev) =>
+      prev.map((q, i) => {
+        if (i !== qIndex) return q;
+        const { media: _removed, ...rest } = q;
+        return rest as QuizQuestion;
+      })
+    );
   };
 
   const optionColors = TILE_COLORS.map((c) => c.bg);

@@ -11,11 +11,11 @@ QuizTown is a real-time interactive quiz platform designed for conferences, comp
 - **Leaderboard** -- Animated rankings based on speed + accuracy.
 - **Host Control Deck** -- Start, pause, skip questions. Monitor participation live.
 - **Public Screen** -- Projection-optimized 16:9 display with giant text and vote bars.
-- **Quiz Studio** -- Create and manage quizzes with multiple-choice questions, GIFs, images, and code snippets.
+- **Quiz Studio** -- Create and manage quizzes with multiple-choice questions and GIFs.
 - **GIF Search** -- Built-in GIPHY search to add animated GIFs to questions (Kahoot-style).
-- **Emoji Picker** -- Quick emoji insertion in question text.
 - **Multilingual** -- French and English support.
 - **Dark Mode** -- Automatic dark mode support via system preference.
+- **Demo Mode** -- Try the full experience without Firebase (BroadcastChannel sync between tabs).
 - **PWA** -- Installable on mobile devices.
 
 ## Tech Stack
@@ -30,6 +30,7 @@ QuizTown is a real-time interactive quiz platform designed for conferences, comp
 | Live Engine    | Firebase Realtime Database       |
 | Hosting        | Firebase Hosting                 |
 | Tests          | Vitest, React Testing Library    |
+| E2E Tests      | Playwright (Chromium)            |
 | CI/CD          | GitHub Actions                   |
 | Language       | TypeScript (strict)              |
 
@@ -210,7 +211,4 @@ tests/
 - See `spec/TECH.md` for data models and technical architecture
 - See `spec/EPIC.md` for user stories
 - See `spec/PLAN.md` for implementation phases and progress
-
-## License
-
-Private -- TechTown internal project.
+- See `spec/NEW_FEATURES.md` for new features based on user feedbacks.

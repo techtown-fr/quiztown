@@ -1,0 +1,10 @@
+- [ ] remettre l'authentification pour la partie organiser limité aux email techtown.fr (il faut bloquer côté client + blocage côté firebase auth)
+- [ ] lobby : afficher un mur des login des gens connectés
+- [ ] 0 XP pour le classement alors qu'il y a des points
+- [ ] une seule solution : pouvoir en sélectionner plusieurs !
+- [ ] est-ce que tu prends bien en compte la vitessse
+- [ ] une fois le temps écoulé des questions, affiche sur l'écran organisateur les réposnes !
+- [ ] réorgniser les questions entre elles en les déplaçant
+- [ ] pouvoir dupliquer une question
+- [ ] Termine le quizz : cotillon + coup de projecteur sur les Premiers (afficher d'abord 4 & 5 puis le 3ème puis 2ème puis 1er) !
+- [ ] Dark Mode : les titres des cartes quiz dans /host sont blancs/gris sur un fond blanc en mode light. On ne voit rien !

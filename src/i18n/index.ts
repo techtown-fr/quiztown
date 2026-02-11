@@ -99,7 +99,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'player.session.questionOf': 'Question {current} / {total}',
 
     // Footer
-    'footer.powered': 'Propulsé par TechTown',
+    'footer.powered': 'Propulsé par QuizTown',
     'footer.tagline': 'Play. Vote. Learn.',
   },
   en: {
@@ -200,7 +200,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'player.session.questionOf': 'Question {current} / {total}',
 
     // Footer
-    'footer.powered': 'Powered by TechTown',
+    'footer.powered': 'Powered by QuizTown',
     'footer.tagline': 'Play. Vote. Learn.',
   },
 };

@@ -37,7 +37,8 @@ QuizTown is a real-time interactive quiz platform for conferences, companies, an
 - **React Islands**: `PascalCase.tsx` (e.g., `PlayerBuzzer.tsx`) in `src/islands/`
 - **React UI components**: `PascalCase.tsx` in `src/islands/ui/`
 - **Hooks**: `camelCase.ts` (e.g., `useSession.ts`) in `src/hooks/`
-- **Lib helpers**: `camelCase.ts` in `src/lib/` (e.g., `giphy.ts`)
+- **Lib helpers**: `camelCase.ts` in `src/lib/` (e.g., `giphy.ts`, `demoBroadcast.ts`)
+- **Utils**: `camelCase.ts` in `src/utils/` (e.g., `scoring.ts`)
 - **Firebase helpers**: `camelCase.ts` in `src/firebase/`
 - **Types**: `camelCase.ts` in `src/types/`
 - **Tests**: mirror source structure in `tests/`

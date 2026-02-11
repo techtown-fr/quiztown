@@ -139,55 +139,7 @@ Texte scalable
 
 Feedback couleur + texte + forme (jamais la couleur seule)
 
-### Accessibilité des VoteTiles -- Couleurs & Pictogrammes
-
-Les 4 tuiles de réponse utilisent un système **triple redondance** : **forme (pictogramme) + couleur + position**. Cela garantit la lisibilité pour les daltoniens (protanopie, deutéranopie, tritanopie) et respecte WCAG 2.1 "Use of Color" (1.4.1).
-
-#### Pictogrammes PlayStation
-
-Chaque tuile est identifiée par un pictogramme inspiré des boutons PlayStation, immédiatement reconnaissable :
-
-| Tuile | Pictogramme | Symbole Unicode | SVG fallback |
-|-------|-------------|-----------------|--------------|
-| A     | ✕ Croix     | U+2715          | Oui          |
-| B     | ○ Cercle    | U+25CB          | Oui          |
-| C     | △ Triangle  | U+25B3          | Oui          |
-| D     | □ Carré     | U+25A1          | Oui          |
-
-Le pictogramme est affiché dans le badge coloré à gauche du texte de réponse (32×32px) ET en label d'accessibilité (`aria-label`).
-
-#### Palette VoteTiles accessible
-
-Les couleurs actuelles (Blue, Coral, Mint, Violet) posent problème pour les daltoniens : Coral et Mint sont quasi identiques en protanopie/deutéranopie. Nouvelle palette optimisée avec **variation de luminance ET de teinte** :
-
-| Tuile | Pictogramme | Couleur         | Hex       | Token CSS                | Luminance relative |
-|-------|-------------|-----------------|-----------|--------------------------|-------------------|
-| A     | ✕ Croix     | Bleu            | `#2563EB` | `--color-tile-cross`     | Moyenne-basse     |
-| B     | ○ Cercle    | Orange          | `#F59E0B` | `--color-tile-circle`    | Haute             |
-| C     | △ Triangle  | Vert émeraude   | `#10B981` | `--color-tile-triangle`  | Moyenne           |
-| D     | □ Carré     | Rose            | `#EC4899` | `--color-tile-square`    | Moyenne-haute     |
-
-**Pourquoi ces couleurs ?**
-- **Bleu** (#2563EB) : visible par tous les types de daltonisme
-- **Orange** (#F59E0B) : luminance très haute, distinct du bleu et du vert même en protanopie/deutéranopie (remplace Coral)
-- **Vert émeraude** (#10B981) : teinte plus sombre et saturée que le Mint (#2DD4BF), bien distinct de l'orange par luminance
-- **Rose** (#EC4899) : teinte chaude distincte du bleu et du vert, bien séparé de l'orange par la teinte
-
-#### Simulation daltonisme
-
-| Type          | Bleu ✕  | Orange ○ | Vert △  | Rose □  | Distinguable ? |
-|---------------|---------|----------|---------|---------|----------------|
-| Vision normale| Bleu    | Orange   | Vert    | Rose    | ✓              |
-| Protanopie    | Bleu    | Jaune    | Brun    | Gris    | ✓ (luminance)  |
-| Deutéranopie  | Bleu    | Jaune    | Olive   | Gris    | ✓ (luminance)  |
-| Tritanopie    | Bleu    | Rose     | Vert    | Rose    | ✓ (+ formes)   |
-
-#### Règles d'affichage
-
-- Le pictogramme est **toujours visible** (pas masqué au survol ou à la sélection)
-- Sur l'écran public (projection 16:9), les pictogrammes sont affichés en **48×48px minimum**
-- En mode sombre, les couleurs restent identiques (bon contraste sur `--color-dark-slate`)
-- Les barres de vote sur l'écran public reprennent le même code couleur + pictogramme
+> Couleurs, pictogrammes et accessibilité daltonisme des VoteTiles : voir `spec/GENERAL.md` section "Daltonisme & identification des réponses".
 
 Passons à du détail 
 
@@ -524,21 +476,7 @@ Effets visuels :
 - Chaque entrée a une **bordure colorée** selon la médaille
 - Les 4ème et 5ème sont affichés en style minimal (pas de médaille)
 
-📡 MODE DEMO — SYNCHRONISATION BroadcastChannel
-
-Le mode démo utilise **BroadcastChannel API** pour synchroniser les onglets :
-
-| Page | Rôle | URL |
-|------|------|-----|
-| `/demo/screen` | **Host** — source de vérité, contrôle le quiz | Écran de projection |
-| `/demo` | **Client** — détecte le host, envoie join/answer | Vue joueur |
-
-Flux de communication :
-1. Le joueur ping le host au chargement (détection en 600ms)
-2. Si host détecté → **mode connecté** (bandeau "Connecté à l'écran")
-3. Si pas de host → **mode solo** (comportement autonome avec bots)
-4. Le host broadcast l'état (phase, question, leaderboard) à chaque changement
-5. Le joueur envoie `join` et `answer` — le host répond avec `feedback` personnel
+> Mode démo (BroadcastChannel, ping/pong, bots) : voir `AGENTS.md` section "Demo Mode".
 
 📐 RÈGLES GLOBALES UX
 
