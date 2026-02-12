@@ -221,7 +221,8 @@ const styles: Record<string, React.CSSProperties> = {
   emptyState: {
     textAlign: 'center' as const,
     padding: 'var(--spacing-3xl) var(--spacing-lg)',
-    background: 'white',
+    background: 'var(--color-card-bg)',
+    color: 'var(--color-card-text)',
     borderRadius: 'var(--radius-card)',
     boxShadow: 'var(--shadow-card)',
   },
@@ -264,7 +265,8 @@ const styles: Record<string, React.CSSProperties> = {
     gap: 'var(--spacing-lg)',
   },
   quizCard: {
-    background: 'white',
+    background: 'var(--color-card-bg)',
+    color: 'var(--color-card-text)',
     borderRadius: 'var(--radius-card)',
     boxShadow: 'var(--shadow-card)',
     overflow: 'hidden',
@@ -297,7 +299,7 @@ const styles: Record<string, React.CSSProperties> = {
   cardActions: {
     display: 'flex',
     gap: 0,
-    borderTop: '1px solid rgba(15,23,42,0.08)',
+    borderTop: '1px solid var(--color-card-border)',
   },
   btnLaunch: {
     flex: 1,
@@ -316,7 +318,7 @@ const styles: Record<string, React.CSSProperties> = {
     background: 'transparent',
     color: 'var(--color-violet-pulse)',
     border: 'none',
-    borderLeft: '1px solid rgba(15,23,42,0.08)',
+    borderLeft: '1px solid var(--color-card-border)',
     fontFamily: 'var(--font-body)',
     fontSize: '0.8rem',
     cursor: 'pointer',
@@ -331,7 +333,7 @@ const styles: Record<string, React.CSSProperties> = {
     background: 'transparent',
     color: 'var(--color-alert-coral)',
     border: 'none',
-    borderLeft: '1px solid rgba(15,23,42,0.08)',
+    borderLeft: '1px solid var(--color-card-border)',
     fontFamily: 'var(--font-body)',
     fontSize: '0.8rem',
     cursor: 'pointer',

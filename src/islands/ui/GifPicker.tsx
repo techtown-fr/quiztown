@@ -147,7 +147,7 @@ export default function GifPicker({ lang, onSelect, onClose }: Props) {
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.2 }}
           style={{
-            background: 'var(--color-soft-white)',
+            background: 'var(--color-card-bg)',
             borderRadius: 'var(--radius-card)',
             boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
             width: '100%',
@@ -165,7 +165,7 @@ export default function GifPicker({ lang, onSelect, onClose }: Props) {
               alignItems: 'center',
               gap: '0.75rem',
               padding: '1rem 1rem 0.75rem',
-              borderBottom: '1px solid rgba(15,23,42,0.08)',
+              borderBottom: '1px solid var(--color-card-border)',
             }}
           >
             <div style={{ position: 'relative', flex: 1 }}>
@@ -193,12 +193,13 @@ export default function GifPicker({ lang, onSelect, onClose }: Props) {
                   padding: '0.65rem 0.75rem 0.65rem 2.5rem',
                   fontFamily: 'var(--font-body)',
                   fontSize: '0.95rem',
-                  border: '2px solid rgba(15,23,42,0.1)',
+                  border: '2px solid var(--color-card-border)',
                   borderRadius: 'var(--radius-button)',
                   outline: 'none',
                   boxSizing: 'border-box',
                   transition: 'border-color 0.15s',
-                  background: 'white',
+                  background: 'var(--color-card-bg)',
+                  color: 'var(--color-card-text)',
                 }}
               />
             </div>
@@ -211,12 +212,12 @@ export default function GifPicker({ lang, onSelect, onClose }: Props) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: 'rgba(15,23,42,0.05)',
+                background: 'var(--color-card-border)',
                 border: 'none',
                 borderRadius: 'var(--radius-full)',
                 cursor: 'pointer',
                 fontSize: '1.1rem',
-                color: 'var(--color-dark-slate)',
+                color: 'var(--color-card-text)',
                 flexShrink: 0,
               }}
             >
@@ -343,7 +344,7 @@ export default function GifPicker({ lang, onSelect, onClose }: Props) {
           <div
             style={{
               padding: '0.5rem 1rem',
-              borderTop: '1px solid rgba(15,23,42,0.08)',
+              borderTop: '1px solid var(--color-card-border)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

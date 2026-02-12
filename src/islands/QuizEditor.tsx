@@ -216,7 +216,8 @@ export default function QuizEditor({ lang, onSave, initialTitle, initialDescript
         <div
           key={question.id}
           style={{
-            background: 'white',
+            background: 'var(--color-card-bg)',
+            color: 'var(--color-card-text)',
             borderRadius: 'var(--radius-card)',
             boxShadow: 'var(--shadow-card)',
             padding: '1.5rem',
@@ -278,7 +279,7 @@ export default function QuizEditor({ lang, onSave, initialTitle, initialDescript
                 borderRadius: 'var(--radius-button)',
                 overflow: 'hidden',
                 background: 'rgba(15,23,42,0.03)',
-                border: '2px solid rgba(15,23,42,0.08)',
+                border: '2px solid var(--color-card-border)',
                 display: 'inline-block',
                 maxWidth: '100%',
               }}
@@ -332,7 +333,7 @@ export default function QuizEditor({ lang, onSave, initialTitle, initialDescript
                   gap: '0.5rem',
                   padding: '0.5rem',
                   borderRadius: 'var(--radius-button)',
-                  border: `2px solid ${option.isCorrect ? 'var(--color-mint-pop)' : 'rgba(15,23,42,0.1)'}`,
+                  border: `2px solid ${option.isCorrect ? 'var(--color-mint-pop)' : 'var(--color-card-border)'}`,
                   background: option.isCorrect ? 'rgba(45,212,191,0.05)' : 'transparent',
                   transition: 'border-color 0.15s, background 0.15s',
                 }}
@@ -451,11 +452,13 @@ const inputStyle: React.CSSProperties = {
   padding: '0.75rem 1rem',
   fontFamily: 'var(--font-body)',
   fontSize: '1rem',
-  border: '2px solid rgba(15,23,42,0.1)',
+  border: '2px solid var(--color-card-border)',
   borderRadius: 'var(--radius-button)',
   outline: 'none',
   boxSizing: 'border-box',
   transition: 'border-color 0.15s',
+  background: 'var(--color-card-bg)',
+  color: 'var(--color-card-text)',
 };
 
 const primaryBtnStyle: React.CSSProperties = {
@@ -504,9 +507,9 @@ const mediaBtnStyle: React.CSSProperties = {
   fontFamily: 'var(--font-display)',
   fontWeight: 600,
   fontSize: '0.8rem',
-  background: 'rgba(15,23,42,0.04)',
-  color: 'var(--color-dark-slate)',
-  border: '2px solid rgba(15,23,42,0.1)',
+  background: 'var(--color-card-bg)',
+  color: 'var(--color-card-text)',
+  border: '2px solid var(--color-card-border)',
   borderRadius: 'var(--radius-button)',
   cursor: 'pointer',
   transition: 'border-color 0.15s, background 0.15s',

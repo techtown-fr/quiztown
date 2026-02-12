@@ -78,6 +78,11 @@
   --shadow-glow-blue: 0 0 20px rgb(37 99 235 / 0.3);
   --shadow-glow-violet: 0 0 20px rgb(124 58 237 / 0.3);
   --shadow-glow-mint: 0 0 20px rgb(45 212 191 / 0.3);
+
+  /* Card surfaces (light/dark aware) */
+  --color-card-bg: #ffffff;
+  --color-card-text: #0F172A;
+  --color-card-border: rgba(15, 23, 42, 0.08);
 }
 
 /* ============================================
@@ -135,6 +140,11 @@ h1, h2, h3, h4, h5, h6 {
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
+
+    /* Card surfaces adapt to dark mode */
+    --color-card-bg: #1E293B;
+    --color-card-text: #F8FAFC;
+    --color-card-border: rgba(248, 250, 252, 0.1);
   }
 
   html {

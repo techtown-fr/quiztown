@@ -7,4 +7,3 @@
 - [ ] réorgniser les questions entre elles en les déplaçant
 - [ ] pouvoir dupliquer une question
 - [ ] Termine le quizz : cotillon + coup de projecteur sur les Premiers (afficher d'abord 4 & 5 puis le 3ème puis 2ème puis 1er) !
-- [ ] Dark Mode : les titres des cartes quiz dans /host sont blancs/gris sur un fond blanc en mode light. On ne voit rien !
