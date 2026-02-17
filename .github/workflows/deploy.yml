@@ -81,7 +81,7 @@ jobs:
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         run: |
           firebase deploy --only firestore:rules --project quiztown-app
-          firebase deploy --only database --project quiztown-app --debug
+          firebase deploy --only database --project quiztown-app
 
       # Live deploys on push to main
       - name: Deploy to Live (Workload Identity)
