@@ -1,0 +1,8 @@
+# NPM Updates
+
+package.json @techtown-fr/dependencies
+package-lock.json @techtown-fr/dependencies
+
+# CI/CD Updates
+
+.github/workflows/* @techtown-fr/dependencies

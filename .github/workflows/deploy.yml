@@ -1,4 +1,4 @@
-name: Build, Test & Deploy
+name: CI/CD - Build and Deploy to Firebase
 
 on:
   push:
@@ -6,20 +6,39 @@ on:
   pull_request:
     branches: [main]
 
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+  checks: write
 
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: 22
+          cache: "npm"
+
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Run tests
@@ -31,49 +50,45 @@ jobs:
           PUBLIC_FIREBASE_CONFIG: ${{ secrets.PUBLIC_FIREBASE_CONFIG }}
           PUBLIC_GIPHY_API_KEY: ${{ secrets.PUBLIC_GIPHY_API_KEY }}
 
-      - name: Upload build artifact
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: actions/upload-artifact@v4
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v3
         with:
-          name: dist
-          path: dist/
+          workload_identity_provider: "projects/690787741524/locations/global/workloadIdentityPools/github/providers/github"
+          service_account: "github-actions@quiztown-app.iam.gserviceaccount.com"
 
-  deploy:
-    needs: build-and-test
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist/
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
-      - name: Install Firebase CLI
-        run: npm install -g firebase-tools
-
-      - name: Authenticate to Firebase
+      - name: Export federated identity credentials to env
         run: |
-          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > $RUNNER_TEMP/firebase-sa.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/firebase-sa.json" >> $GITHUB_ENV
+          CREDENTIALS_PATH="${{ steps.auth.outputs.credentials_file_path }}"
+          SERVICE_ACCOUNT_KEY="$(tr -d '\n' < "$CREDENTIALS_PATH")"
+          echo "SERVICE_ACCOUNT_KEY=$SERVICE_ACCOUNT_KEY" >> "$GITHUB_ENV"
 
-      - name: Deploy Firebase security rules
-        run: |
-          firebase deploy --only firestore:rules --project ${{ secrets.FIREBASE_PROJECT_ID }}
-          firebase deploy --only database --project ${{ secrets.FIREBASE_PROJECT_ID }}
-
-      - name: Deploy to Firebase Hosting
+      # Preview deploys on pull requests (PR comments enabled)
+      - name: Deploy Preview (Workload Identity)
+        if: ${{ github.event_name == 'pull_request' }}
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          firebaseServiceAccount: "${{ env.SERVICE_ACCOUNT_KEY }}" # This line is different than usual !!
+          projectId: quiztown-app
+          channelId: preview-${{ github.event.pull_request.number }}
+
+      - name: Install Firebase CLI
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        run: npm install -g firebase-tools
+
+      - name: Deploy Firebase security rules
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        run: |
+          firebase deploy --only firestore:rules --project quiztown-app
+          firebase deploy --only database --project quiztown-app --debug
+
+      # Live deploys on push to main
+      - name: Deploy to Live (Workload Identity)
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: "${{ env.SERVICE_ACCOUNT_KEY }}" # This line is different than usual !!
+          projectId: quiztown-app
           channelId: live
-          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
