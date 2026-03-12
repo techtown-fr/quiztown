@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import AuthGuard from './AuthGuard';
 import QuizEditor from './QuizEditor';
 import { useAuth } from '../hooks/useAuth';
 import { getQuiz, updateQuiz } from '../firebase/firestore';
@@ -11,7 +12,7 @@ interface Props {
 
 function EditPageContent({ lang }: Props): JSX.Element {
   const { user } = useAuth();
-  const userId = user?.uid ?? 'dev-user'; // TODO: restore auth check
+  const userId = user?.uid ?? '';
 
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [loading, setLoading] = useState(true);
@@ -139,8 +140,11 @@ function EditPageContent({ lang }: Props): JSX.Element {
 }
 
 export default function HostEditPage({ lang }: Props): JSX.Element {
-  // TODO: restore <AuthGuard lang={lang}> wrapper
-  return <EditPageContent lang={lang} />;
+  return (
+    <AuthGuard lang={lang}>
+      <EditPageContent lang={lang} />
+    </AuthGuard>
+  );
 }
 
 const styles: Record<string, React.CSSProperties> = {

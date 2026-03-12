@@ -1,4 +1,4 @@
-// import AuthGuard from './AuthGuard'; // TODO: restore auth
+import AuthGuard from './AuthGuard';
 import QuizEditor from './QuizEditor';
 import { useAuth } from '../hooks/useAuth';
 import { createQuiz } from '../firebase/firestore';
@@ -11,7 +11,7 @@ interface Props {
 
 function CreatePageContent({ lang }: Props): JSX.Element {
   const { user } = useAuth();
-  const userId = user?.uid ?? 'dev-user'; // TODO: restore auth check
+  const userId = user?.uid ?? '';
 
   const handleSave = async (
     title: string,
@@ -57,6 +57,9 @@ function CreatePageContent({ lang }: Props): JSX.Element {
 }
 
 export default function HostCreatePage({ lang }: Props): JSX.Element {
-  // TODO: restore <AuthGuard lang={lang}> wrapper
-  return <CreatePageContent lang={lang} />;
+  return (
+    <AuthGuard lang={lang}>
+      <CreatePageContent lang={lang} />
+    </AuthGuard>
+  );
 }

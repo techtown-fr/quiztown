@@ -1,5 +1,6 @@
-// import AuthGuard from './AuthGuard'; // TODO: restore auth
+import AuthGuard from './AuthGuard';
 import { useState, useEffect } from 'react';
+import { useAuth } from '../hooks/useAuth';
 import { getAllQuizzes, deleteQuiz } from '../firebase/firestore';
 import { createSession } from '../firebase/realtime';
 import type { Quiz } from '../types/quiz';
@@ -38,7 +39,8 @@ const translations: Record<Lang, Record<string, string>> = {
   },
 };
 
-export default function HostDashboard({ lang }: Props): JSX.Element {
+function DashboardContent({ lang }: Props): JSX.Element {
+  const { user } = useAuth();
   const t = translations[lang];
   const createUrl = lang === 'en' ? '/en/host/create' : '/host/create';
   const editBaseUrl = lang === 'en' ? '/en/host/edit' : '/host/edit';
@@ -70,7 +72,7 @@ export default function HostDashboard({ lang }: Props): JSX.Element {
   async function handleLaunch(quiz: Quiz): Promise<void> {
     try {
       setLaunchingId(quiz.id);
-      const sessionId = await createSession(quiz.id, 'dev-user', quiz.questions.length);
+      const sessionId = await createSession(quiz.id, user?.uid ?? '', quiz.questions.length);
       window.location.href = `${liveBaseUrl}?session=${sessionId}`;
     } catch (err) {
       console.error('Failed to launch quiz:', err);
@@ -88,10 +90,8 @@ export default function HostDashboard({ lang }: Props): JSX.Element {
     }
   }
 
-  // TODO: restore <AuthGuard lang={lang}> wrapper
   return (
-    <>
-      <section style={styles.dashboard}>
+    <section style={styles.dashboard}>
         <div style={styles.header}>
           <h1 style={styles.title}>{t.title}</h1>
           <a href={createUrl} style={styles.btnCreate}>
@@ -167,8 +167,15 @@ export default function HostDashboard({ lang }: Props): JSX.Element {
             ))}
           </div>
         )}
-      </section>
-    </>
+    </section>
+  );
+}
+
+export default function HostDashboard({ lang }: Props): JSX.Element {
+  return (
+    <AuthGuard lang={lang}>
+      <DashboardContent lang={lang} />
+    </AuthGuard>
   );
 }
 

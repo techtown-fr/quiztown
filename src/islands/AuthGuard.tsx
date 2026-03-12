@@ -13,8 +13,10 @@ const translations: Record<Lang, Record<string, string>> = {
     'auth.logout': 'Déconnexion',
     'auth.login.title': 'Connexion requise',
     'auth.login.description':
-      "Connectez-vous avec votre compte Google pour accéder à l'espace organisateur.",
+      "Connectez-vous avec votre compte Google @techtown.fr pour accéder à l'espace organisateur.",
     'auth.error': 'Erreur de connexion. Réessayez.',
+    'auth.error.domain':
+      'Accès réservé aux comptes @techtown.fr. Veuillez utiliser votre adresse professionnelle.',
     'auth.welcome': 'Bonjour',
     'auth.loading': 'Chargement...',
   },
@@ -23,8 +25,10 @@ const translations: Record<Lang, Record<string, string>> = {
     'auth.logout': 'Sign out',
     'auth.login.title': 'Sign in required',
     'auth.login.description':
-      'Sign in with your Google account to access the host dashboard.',
+      'Sign in with your @techtown.fr Google account to access the host dashboard.',
     'auth.error': 'Login failed. Please try again.',
+    'auth.error.domain':
+      'Access restricted to @techtown.fr accounts. Please use your professional email.',
     'auth.welcome': 'Hello',
     'auth.loading': 'Loading...',
   },
@@ -59,7 +63,7 @@ function GoogleIcon(): JSX.Element {
 }
 
 export default function AuthGuard({ lang, children }: AuthGuardProps): JSX.Element {
-  const { user, loading, error, login, logout } = useAuth();
+  const { user, loading, error, errorType, login, logout } = useAuth();
 
   // Loading state
   if (loading) {
@@ -82,7 +86,11 @@ export default function AuthGuard({ lang, children }: AuthGuardProps): JSX.Eleme
           <h2 style={styles.loginTitle}>{t(lang, 'auth.login.title')}</h2>
           <p style={styles.loginDescription}>{t(lang, 'auth.login.description')}</p>
 
-          {error && <p style={styles.errorText}>{t(lang, 'auth.error')}</p>}
+          {error && (
+            <p style={styles.errorText}>
+              {t(lang, errorType === 'domain' ? 'auth.error.domain' : 'auth.error')}
+            </p>
+          )}
 
           <button
             onClick={login}
@@ -166,7 +174,8 @@ const styles: Record<string, React.CSSProperties> = {
   loginCard: {
     textAlign: 'center' as const,
     padding: 'var(--spacing-3xl) var(--spacing-2xl)',
-    background: 'white',
+    background: 'var(--color-card-bg)',
+    color: 'var(--color-card-text)',
     borderRadius: 'var(--radius-card)',
     boxShadow: 'var(--shadow-card)',
     maxWidth: 420,
@@ -211,13 +220,13 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     gap: 'var(--spacing-sm)',
     padding: 'var(--spacing-md) var(--spacing-xl)',
-    background: 'white',
-    border: '2px solid #e2e8f0',
+    background: 'var(--color-card-bg)',
+    border: '2px solid var(--color-card-border)',
     borderRadius: 'var(--radius-button)',
     fontFamily: 'var(--font-display)',
     fontWeight: 600,
     fontSize: '0.95rem',
-    color: 'var(--color-dark-slate)',
+    color: 'var(--color-card-text)',
     cursor: 'pointer',
     transition: 'all 150ms ease',
     boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
