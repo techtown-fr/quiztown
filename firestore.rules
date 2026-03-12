@@ -2,11 +2,18 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Quizzes: read by anyone, write only by authenticated hosts
+    // Only allow authenticated users with @techtown.fr email
+    function isTechTownUser() {
+      return request.auth != null
+        && request.auth.token.email.matches('.*@techtown[.]fr$');
+    }
+
+    // Quizzes: read by anyone, write only by authenticated TechTown hosts
     match /quizzes/{quizId} {
       allow read: if true;
-      allow create: if true; // TODO: restore to request.auth != null
-      allow update, delete: if true; // TODO: restore to request.auth != null && request.auth.uid == resource.data.metadata.authorId
+      allow create: if isTechTownUser();
+      allow update, delete: if isTechTownUser()
+        && request.auth.uid == resource.data.metadata.authorId;
     }
 
     // Results: read by host, write by system

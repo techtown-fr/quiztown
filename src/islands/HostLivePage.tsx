@@ -1,4 +1,4 @@
-// import AuthGuard from './AuthGuard'; // TODO: restore auth
+import AuthGuard from './AuthGuard';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import HostLiveControl from './HostLiveControl';
 import { onSessionChange, setCurrentQuestion, updateSessionStatus, revealAnswer, clearCorrectOption } from '../firebase/realtime';
@@ -28,7 +28,7 @@ function sanitizeQuestion(q: QuizQuestion): CurrentQuestion {
   return sanitized;
 }
 
-export default function HostLivePage({ sessionId: propSessionId, lang }: Props): React.JSX.Element {
+function HostLiveContent({ sessionId: propSessionId, lang }: Props): React.JSX.Element {
   const [sessionId, setSessionId] = useState<string | null>(propSessionId ?? null);
   const [session, setSession] = useState<Session | null>(null);
   const [quiz, setQuiz] = useState<Quiz | null>(null);
@@ -221,7 +221,6 @@ export default function HostLivePage({ sessionId: propSessionId, lang }: Props):
 
   const isLastQuestion = session.currentQuestionIndex >= session.totalQuestions - 1;
 
-  // TODO: restore <AuthGuard lang={lang}> wrapper
   return (
     <HostLiveControl
       sessionId={sessionId}
@@ -243,5 +242,13 @@ export default function HostLivePage({ sessionId: propSessionId, lang }: Props):
       onShowResults={handleShowResults}
       onShowLeaderboard={handleShowLeaderboard}
     />
+  );
+}
+
+export default function HostLivePage({ sessionId, lang }: Props): React.JSX.Element {
+  return (
+    <AuthGuard lang={lang}>
+      <HostLiveContent sessionId={sessionId} lang={lang} />
+    </AuthGuard>
   );
 }
