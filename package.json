@@ -18,7 +18,7 @@
     "test:e2e:ui": "npx playwright test --ui"
   },
   "dependencies": {
-    "@astrojs/mdx": "^4.3.13",
+    "@astrojs/mdx": "^5.0.3",
     "@astrojs/react": "^4.4.2",
     "@astrojs/sitemap": "^3.7.2",
     "@giphy/js-fetch-api": "^5.7.0",
