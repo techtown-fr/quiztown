@@ -1,0 +1,15 @@
+---
+import GameLayout from '../../../layouts/GameLayout.astro';
+import RaffleScreen from '../../../islands/RaffleScreen';
+import { getLang } from '../../../i18n';
+
+const lang = getLang(Astro);
+
+export function getStaticPaths() {
+  return [{ params: { id: 'demo' } }];
+}
+---
+
+<GameLayout title="QuizTown - Raffle Screen">
+  <RaffleScreen lang={lang} client:load />
+</GameLayout>

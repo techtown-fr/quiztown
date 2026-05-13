@@ -86,6 +86,59 @@ sessions/{sessionId}/
 
 > Les types TypeScript correspondants sont dans `src/types/session.ts` (`Session`, `SessionStatus`, `Player`, `PlayerResponse`, `CurrentQuestion`).
 
+### Raffle (tirage au sort SWAG)
+
+Le raffle est un mode autonome (sans quiz) qui réutilise les patterns RTDB pour synchroniser host, joueurs et écran de projection.
+
+```
+raffles/{raffleId}/
+  ├── status: "lobby" | "drawing" | "reveal" | "finished"
+  ├── hostId: string                    # Firebase Auth UID du host
+  ├── currentDrawIndex: number          # Index du lot en cours (-1 = aucun)
+  ├── currentWinner: string | null      # ID du gagnant courant
+  ├── createdAt: number
+  ├── participants/
+  │   └── {participantId}: { id, name, joinedAt }
+  └── prizes: [
+      { id, label, winnerId: string | null, winnerName: string | null }
+    ]
+```
+
+> Les types TypeScript correspondants sont dans `src/types/raffle.ts` (`Raffle`, `RaffleStatus`, `RaffleParticipant`, `RafflePrize`).
+
+Helpers RTDB (`src/firebase/raffle.ts`) : `createRaffle`, `joinRaffle`, `setPrizes`, `startDrawing`, `revealWinner`, `updateRaffleStatus`, `onRaffleChange`.
+
+**Règles de sécurité** (`database.rules.json`) :
+- Lecture publique sur `raffles/$raffleId` (lobby, reveal, statut visibles par tous)
+- Écriture publique sur `participants/$participantId` avec `.validate` (champs requis : `id`, `name`, `joinedAt`)
+- L'écriture sur le reste du raffle n'est pas restreinte côté serveur dans cette version (le host a un `AuthGuard` côté client). À durcir si exposé publiquement.
+
+**Workflow raffle** :
+
+```mermaid
+sequenceDiagram
+    participant Host
+    participant RTDB as Realtime_DB
+    participant Player
+    participant Screen
+
+    Host->>RTDB: createRaffle (status: lobby)
+    Host->>RTDB: setPrizes ([T-shirt, Mug, ...])
+    Player->>RTDB: joinRaffle (id, name)
+    RTDB-->>Host: participants count++
+    RTDB-->>Screen: participants count++
+
+    Host->>RTDB: startDrawing (status: drawing)
+    RTDB-->>Player: phase = drawing
+    RTDB-->>Screen: roulette animation
+    Host->>RTDB: revealWinner (status: reveal, currentWinner, prizes[i].winnerId)
+    RTDB-->>Player: phase = reveal (didIWin?)
+    RTDB-->>Screen: winner name geant
+
+    Host->>RTDB: startDrawing (lot suivant)
+    Host->>RTDB: updateRaffleStatus (finished)
+```
+
 ### Passerelle Firestore → Realtime DB
 
 Lorsqu'un Host lance un quiz :

@@ -1,0 +1,11 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import RaffleHost from '../../islands/RaffleHost';
+import { getLang } from '../../i18n';
+
+const lang = getLang(Astro);
+---
+
+<Layout title="QuizTown - Raffle" hideFooter>
+  <RaffleHost lang={lang} client:load />
+</Layout>

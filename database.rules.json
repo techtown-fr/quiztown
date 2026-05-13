@@ -27,6 +27,20 @@
           }
         }
       }
+    },
+    "raffles": {
+      ".indexOn": ["hostId"],
+      ".read": "auth != null && query.orderByChild === 'hostId' && query.equalTo === auth.uid",
+      "$raffleId": {
+        ".read": true,
+        ".write": true,
+        "participants": {
+          "$participantId": {
+            ".write": true,
+            ".validate": "newData.hasChildren(['id', 'name', 'joinedAt'])"
+          }
+        }
+      }
     }
   }
 }

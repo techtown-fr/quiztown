@@ -1,9 +1,9 @@
 ---
 import GameLayout from '../../layouts/GameLayout.astro';
 import PlayerSession from '../../islands/PlayerSession';
-import { getLangFromUrl } from '../../i18n';
+import { getLang } from '../../i18n';
 
-const lang = getLangFromUrl(Astro.url);
+const lang = getLang(Astro);
 
 // For static builds, we pre-render a demo page;
 // real sessions use the Firebase rewrite to serve this page.

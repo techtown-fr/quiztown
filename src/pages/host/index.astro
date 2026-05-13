@@ -1,9 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import HostDashboard from '../../islands/HostDashboard';
-import { getLangFromUrl, useTranslations } from '../../i18n';
+import { getLang, useTranslations } from '../../i18n';
 
-const lang = getLangFromUrl(Astro.url);
+const lang = getLang(Astro);
 const t = useTranslations(lang);
 ---
 

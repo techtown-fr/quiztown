@@ -1,9 +1,13 @@
 ---
-import { getLangFromUrl, useTranslations, getLocalizedPath } from '../i18n';
+import { getLang, useTranslations, getLocalizedPath } from '../i18n';
 
-const lang = getLangFromUrl(Astro.url);
+const lang = getLang(Astro);
 const t = useTranslations(lang);
-const toggleLang = lang === 'fr' ? '/en' : '/';
+// Toggle to the same page in the other locale so users keep their context.
+const sourcePath = Astro.url.pathname;
+const toggleLang = lang === 'fr'
+  ? `/en${sourcePath === '/' ? '' : sourcePath}`
+  : (sourcePath === '/' ? '/' : sourcePath);
 ---
 
 <header class="header">

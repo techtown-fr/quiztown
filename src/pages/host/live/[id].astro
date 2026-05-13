@@ -1,10 +1,10 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import HostLivePage from '../../../islands/HostLivePage';
-import { getLangFromUrl } from '../../../i18n';
+import { getLang } from '../../../i18n';
 
 const { id } = Astro.params;
-const lang = getLangFromUrl(Astro.url);
+const lang = getLang(Astro);
 
 export function getStaticPaths() {
   return [{ params: { id: 'demo' } }];

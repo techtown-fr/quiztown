@@ -211,6 +211,23 @@ export function getLangFromUrl(url: URL): Lang {
   return 'fr';
 }
 
+/**
+ * Resolve the active locale from an Astro page context.
+ *
+ * Prefer this over `getLangFromUrl(Astro.url)` because:
+ * - With `fallbackType: 'rewrite'`, `Astro.url.pathname` still points to the
+ *   original (FR) route while the page is being rendered for `/en/...`.
+ * - `Astro.currentLocale` is set by Astro to the locale of the URL actually
+ *   being served, so it stays correct under rewrites.
+ *
+ * The URL fallback covers edge cases where `currentLocale` is undefined.
+ */
+export function getLang(astro: { currentLocale?: string; url: URL }): Lang {
+  const locale = astro.currentLocale;
+  if (locale === 'en' || locale === 'fr') return locale;
+  return getLangFromUrl(astro.url);
+}
+
 export function useTranslations(lang: Lang) {
   return function t(key: string): string {
     return translations[lang][key] ?? key;

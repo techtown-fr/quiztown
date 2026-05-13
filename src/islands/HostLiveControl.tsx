@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { SessionStatus, Player, CurrentQuestion } from '../types/session';
 import { useLeaderboard } from '../hooks/useLeaderboard';
+import { useQrCode } from '../hooks/useQrCode';
 
 interface Props {
   sessionId: string;
@@ -351,20 +352,8 @@ function HostLeaderboard({ players, lang }: { players: Record<string, Player>; l
 
 function LobbyJoinSection({ joinUrl, lang }: { joinUrl: string; lang: 'fr' | 'en' }) {
   const t = labels[lang];
-  const [qrDataUrl, setQrDataUrl] = useState<string>('');
+  const qrDataUrl = useQrCode(joinUrl, { width: 200 });
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    import('qrcode').then((QRCode) =>
-      QRCode.toDataURL(joinUrl, {
-        width: 200,
-        margin: 2,
-        color: { dark: '#0F172A', light: '#FFFFFF' },
-      })
-        .then(setQrDataUrl)
-        .catch(() => { /* QR generation failed, link still works */ })
-    );
-  }, [joinUrl]);
 
   const handleCopy = useCallback(async () => {
     try {

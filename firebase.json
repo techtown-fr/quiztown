@@ -76,16 +76,48 @@
         "destination": "/play/demo.html"
       },
       {
+        "source": "/en/play/**",
+        "destination": "/en/play/demo.html"
+      },
+      {
         "source": "/host/live/**",
         "destination": "/host/live.html"
+      },
+      {
+        "source": "/en/host/live/**",
+        "destination": "/en/host/live.html"
       },
       {
         "source": "/host/edit/**",
         "destination": "/host/edit.html"
       },
       {
+        "source": "/en/host/edit/**",
+        "destination": "/en/host/edit.html"
+      },
+      {
         "source": "/screen/**",
         "destination": "/screen/demo.html"
+      },
+      {
+        "source": "/en/screen/**",
+        "destination": "/en/screen/demo.html"
+      },
+      {
+        "source": "/raffle/screen/**",
+        "destination": "/raffle/screen/demo/index.html"
+      },
+      {
+        "source": "/en/raffle/screen/**",
+        "destination": "/en/raffle/screen/demo/index.html"
+      },
+      {
+        "source": "/raffle/**",
+        "destination": "/raffle/demo/index.html"
+      },
+      {
+        "source": "/en/raffle/**",
+        "destination": "/en/raffle/demo/index.html"
       },
       {
         "source": "!/@(api|_astro|images|fonts|*.@(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|webp|avif|json|xml|txt))",

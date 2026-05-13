@@ -8,3 +8,9 @@ export type {
   CurrentQuestion,
   BadgeId,
 } from './session';
+export type {
+  Raffle,
+  RaffleStatus,
+  RaffleParticipant,
+  RafflePrize,
+} from './raffle';

@@ -1,5 +1,5 @@
 ---
-import { getLangFromUrl, useTranslations } from '../i18n';
+import { getLang, useTranslations } from '../i18n';
 
 interface Props {
   title?: string;
@@ -9,11 +9,16 @@ interface Props {
 }
 
 const { title, description, ogImage, pageType = 'website' } = Astro.props;
-const lang = getLangFromUrl(Astro.url);
+const lang = getLang(Astro);
 const t = useTranslations(lang);
 
 const siteUrl = 'https://quiztown.fr';
-const currentUrl = new URL(Astro.url.pathname, siteUrl).href;
+// When `fallbackType: 'rewrite'` is active, Astro.url stays on the source path
+// (e.g. /host) even when serving /en/host. Reconstruct the public path so the
+// canonical/og URLs reflect the actual locale.
+const sourcePath = Astro.url.pathname;
+const publicPath = lang === 'en' && !sourcePath.startsWith('/en') ? `/en${sourcePath === '/' ? '' : sourcePath}` : sourcePath;
+const currentUrl = new URL(publicPath, siteUrl).href;
 
 const metaTitle = title ?? t('seo.title');
 const metaDescription = description ?? t('seo.description');
@@ -42,6 +47,6 @@ const metaOgImage = new URL(ogImage ?? '/images/quiztown-og.png', siteUrl).href;
 
 <!-- Canonical & i18n -->
 <link rel="canonical" href={currentUrl} />
-{lang === 'fr' && <link rel="alternate" hreflang="en" href={`${siteUrl}/en${Astro.url.pathname}`} />}
-{lang === 'en' && <link rel="alternate" hreflang="fr" href={Astro.url.pathname.replace('/en', '') || '/'} />}
-<link rel="alternate" hreflang="x-default" href={`${siteUrl}${Astro.url.pathname.replace('/en', '') || '/'}`} />
+{lang === 'fr' && <link rel="alternate" hreflang="en" href={`${siteUrl}/en${sourcePath === '/' ? '' : sourcePath}`} />}
+{lang === 'en' && <link rel="alternate" hreflang="fr" href={`${siteUrl}${sourcePath}`} />}
+<link rel="alternate" hreflang="x-default" href={`${siteUrl}${sourcePath}`} />

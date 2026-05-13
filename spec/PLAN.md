@@ -45,8 +45,9 @@ quiztown/
 │   │   ├── HostLiveControl.tsx       # ControlDeck live (QR code lobby + controls)
 │   │   ├── PlayerSession.tsx         # Orchestrateur session joueur Firebase
 │   │   ├── QuizEditor.tsx            # Studio: création / édition quiz
-│   │   ├── DemoPublicScreen.tsx      # Ecran projection démo (BroadcastChannel)
-│   │   ├── DemoSession.tsx           # Session joueur démo (BroadcastChannel)
+│   │   ├── RaffleHost.tsx            # Host raffle (AuthGuard + lobby + draw + history)
+│   │   ├── RafflePlayer.tsx          # Joueur raffle (join + waiting + reveal)
+│   │   ├── RaffleScreen.tsx          # Ecran projection raffle (QR + roulette + winner)
 │   │   └── ui/                       # Design system React
 │   │       ├── VoteTile.tsx
 │   │       ├── CountdownRing.tsx
@@ -54,14 +55,13 @@ quiztown/
 │   │       ├── LeaderboardRow.tsx
 │   │       └── GifPicker.tsx          # Modal recherche GIF (GIPHY)
 │   ├── lib/                           # Helpers externes
-│   │   ├── giphy.ts                  # Wrapper API GIPHY (search, trending)
-│   │   ├── demoBroadcast.ts          # Types et helpers BroadcastChannel (mode démo)
-│   │   └── demoData.ts              # Données démo (bots, quiz)
+│   │   └── giphy.ts                  # Wrapper API GIPHY (search, trending)
 │   ├── firebase/                      # Firebase SDK + helpers
 │   │   ├── config.ts
 │   │   ├── auth.ts
 │   │   ├── firestore.ts
-│   │   └── realtime.ts
+│   │   ├── realtime.ts
+│   │   └── raffle.ts                 # RTDB helpers raffle (createRaffle, joinRaffle, drawWinner...)
 │   ├── hooks/                         # React hooks custom
 │   │   ├── useSession.ts
 │   │   ├── useCountdown.ts
@@ -85,9 +85,10 @@ quiztown/
 │   │   │       └── [id].astro        # Control deck (demo)
 │   │   ├── screen/
 │   │   │   └── [id].astro            # Ecran public/projection
-│   │   ├── demo/
-│   │   │   ├── index.astro           # Demo joueur (sans Firebase)
-│   │   │   └── screen.astro          # Demo projection (sans Firebase)
+│   │   ├── raffle/
+│   │   │   ├── [id].astro            # Joueur raffle (rejoint via QR/lien)
+│   │   │   └── screen/
+│   │   │       └── [id].astro        # Ecran projection raffle
 │   │   └── en/
 │   │       └── index.astro           # Landing page (EN)
 │   ├── styles/
@@ -95,6 +96,7 @@ quiztown/
 │   ├── types/
 │   │   ├── quiz.ts
 │   │   ├── session.ts
+│   │   ├── raffle.ts                 # Raffle, RaffleParticipant, RafflePrize
 │   │   └── index.ts
 │   └── utils/
 │       └── scoring.ts                # Calcul de score (vitesse + exactitude)
@@ -229,13 +231,22 @@ quiztown/
 - [ ] Labels i18n FR/EN pour les textes GIF
 - [x] `PUBLIC_GIPHY_API_KEY` dans `.env.example`
 
-### Phase 11 : Mode Démo
+### Phase 12 : Raffle (Tirage au sort SWAG)
 
-- [x] `DemoPublicScreen.tsx` -- écran projection démo (BroadcastChannel)
-- [x] `DemoSession.tsx` -- session joueur démo
-- [x] `src/lib/demoBroadcast.ts` -- types messages BroadcastChannel
-- [x] `src/lib/demoData.ts` -- 5 bots, 5 questions
-- [x] Ping/pong host detection (600ms timeout)
-- [x] Mode connecté vs mode solo (fallback)
-- [x] Podium reveal progressif (5→4→3🥉→2🥈→1🥇 + spotlight)
-- [x] Routes `/demo` et `/demo/screen`
+- [x] Types `Raffle`, `RaffleParticipant`, `RafflePrize` (`src/types/raffle.ts`)
+- [x] Helpers RTDB raffle (`src/firebase/raffle.ts`) -- `createRaffle`, `joinRaffle`, `setPrizes`, `startDrawing`, `revealWinner`, `updateRaffleStatus`, `onRaffleChange`
+- [x] `RaffleHost.tsx` -- AuthGuard + lobby QR + éditeur de lots + animation roulette + reveal + historique
+- [x] `RafflePlayer.tsx` -- formulaire join + waiting room + reveal gagnant (différencié si je gagne ou non) + récap final
+- [x] `RaffleScreen.tsx` -- écran projection : QR géant + roulette + reveal nom géant + résultats finaux
+- [x] Pages Astro : `/host/raffle`, `/raffle/[id]`, `/raffle/screen/[id]` (avec `getStaticPaths` demo)
+- [x] Rewrites Firebase Hosting (`/raffle/**`, `/raffle/screen/**`)
+- [x] Règles RTDB (`raffles/$raffleId` -- read/write public, validation participants)
+- [x] Bouton "🎁 Raffle" dans le `HostDashboard` à côté de "Créer un quiz"
+- [ ] Refactor : extraire `useQrCode(url, opts)` (dupliqué 3x : `HostLiveControl`, `RaffleHost`, `RaffleScreen`)
+- [ ] Refactor : extraire `useRaffle(raffleId, lang)` (subscription dupliquée 3x)
+- [ ] Refactor : remplacer les hex hardcodés par les design tokens (`var(--color-*)`, `var(--spacing-*)`)
+- [ ] Bug : roulette pick deux winners différents (un pour l'animation finale, un pour le reveal -- voir review)
+- [ ] Bug : `setInterval` deceleration ne fonctionne pas (closure capture `tick=0`)
+- [ ] Persister `playerId` raffle dans `localStorage` (déduplication si rejoint)
+- [ ] Support `prefers-reduced-motion` dans les animations
+- [ ] Tests unitaires + E2E raffle

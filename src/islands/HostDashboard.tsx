@@ -14,6 +14,7 @@ const translations: Record<Lang, Record<string, string>> = {
   fr: {
     title: 'Dashboard',
     create: 'Créer un quiz',
+    raffle: '🎁 Raffle',
     emptyText: 'Créez votre premier quiz pour commencer !',
     launch: 'Lancer',
     edit: 'Modifier',
@@ -27,6 +28,7 @@ const translations: Record<Lang, Record<string, string>> = {
   en: {
     title: 'Dashboard',
     create: 'Create a quiz',
+    raffle: '🎁 Raffle',
     emptyText: 'Create your first quiz to get started!',
     launch: 'Launch',
     edit: 'Edit',
@@ -45,6 +47,7 @@ function DashboardContent({ lang }: Props): JSX.Element {
   const createUrl = lang === 'en' ? '/en/host/create' : '/host/create';
   const editBaseUrl = lang === 'en' ? '/en/host/edit' : '/host/edit';
   const liveBaseUrl = lang === 'en' ? '/en/host/live/' : '/host/live/';
+  const raffleUrl = lang === 'en' ? '/en/host/raffle' : '/host/raffle';
 
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
@@ -94,9 +97,14 @@ function DashboardContent({ lang }: Props): JSX.Element {
     <section style={styles.dashboard}>
         <div style={styles.header}>
           <h1 style={styles.title}>{t.title}</h1>
-          <a href={createUrl} style={styles.btnCreate}>
-            + {t.create}
-          </a>
+          <div style={{ display: 'flex', gap: 'var(--spacing-sm)', flexWrap: 'wrap' }}>
+            <a href={raffleUrl} style={styles.btnRaffle}>
+              {t.raffle}
+            </a>
+            <a href={createUrl} style={styles.btnCreate}>
+              + {t.create}
+            </a>
+          </div>
         </div>
 
         {loading && (
@@ -208,6 +216,18 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 600,
     fontSize: '0.9rem',
     transition: 'transform 150ms, box-shadow 150ms',
+  },
+  btnRaffle: {
+    padding: 'var(--spacing-sm) var(--spacing-xl)',
+    background: 'transparent',
+    color: 'var(--color-electric-blue)',
+    textDecoration: 'none',
+    borderRadius: 'var(--radius-button)',
+    fontFamily: 'var(--font-display)',
+    fontWeight: 600,
+    fontSize: '0.9rem',
+    border: '2px solid var(--color-electric-blue)',
+    transition: 'transform 150ms, background 150ms',
   },
   loadingState: {
     display: 'flex',

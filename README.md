@@ -13,9 +13,9 @@ QuizTown is a real-time interactive quiz platform designed for conferences, comp
 - **Public Screen** -- Projection-optimized 16:9 display with giant text and vote bars.
 - **Quiz Studio** -- Create and manage quizzes with multiple-choice questions and GIFs.
 - **GIF Search** -- Built-in GIPHY search to add animated GIFs to questions (Kahoot-style).
+- **Raffle** -- Run real-time SWAG giveaways: participants join via QR code, host draws winners with an animated roulette, projection-screen ready.
 - **Multilingual** -- French and English support.
 - **Dark Mode** -- Automatic dark mode support via system preference.
-- **Demo Mode** -- Try the full experience without Firebase (BroadcastChannel sync between tabs).
 - **PWA** -- Installable on mobile devices.
 
 ## Tech Stack
@@ -199,8 +199,9 @@ tests/
 | `/host/live/:id`   | Host control deck (auth required)        |
 | `/play/:id`        | Player join + game                       |
 | `/screen/:id`      | Public projection screen                 |
-| `/demo`            | Demo player (no Firebase needed)         |
-| `/demo/screen`     | Demo projection screen (no Firebase)     |
+| `/host/raffle`     | Raffle host control (auth required)      |
+| `/raffle/:id`      | Raffle player join                       |
+| `/raffle/screen/:id` | Raffle projection screen               |
 
 > **Auth guard**: All `/host/*` pages are protected by an `AuthGuard` React island that requires Google sign-in. Unauthenticated users see a login screen.
 

@@ -476,7 +476,98 @@ Effets visuels :
 - Chaque entrée a une **bordure colorée** selon la médaille
 - Les 4ème et 5ème sont affichés en style minimal (pas de médaille)
 
-> Mode démo (BroadcastChannel, ping/pong, bots) : voir `AGENTS.md` section "Demo Mode".
+🎁 RAFFLE — TIRAGE AU SORT SWAG
+
+Mode autonome (pas de quiz) : créer un raffle, distribuer un QR code, récupérer des participants, lancer des tirages animés pour distribuer des SWAG.
+
+**Branding** : Skin TechTown (`#1C62ED` primaire, `#3B7EFF` accent, `#1F2937` fond sombre, police `Poppins`). Voir la skill `techtown-brand-guidelines` pour les détails.
+
+**Routes** :
+- `/host/raffle` — Host (AuthGuard, lobby + draw)
+- `/raffle/[id]` — Joueur (join + waiting + reveal)
+- `/raffle/screen/[id]` — Écran de projection
+
+**State machine RTDB** : `lobby → drawing → reveal → (lobby pour le lot suivant) → finished`
+
+ÉCRAN R1 — HOST RAFFLE (`/host/raffle`)
+
+**Phase Setup / Lobby** :
+[ Header : "🎁 Raffle" + badge statut ]
+[ Stats : participants count + lots restants/total ]
+[ QR code + lien de join (bouton "Copier") + lien "Ouvrir l'écran de projection" ]
+[ Éditeur de lots : input + bouton "Ajouter", liste des lots avec bouton remove ]
+[ Bouton "Tirer au sort !" (disabled tant qu'il n'y a pas ≥ 1 participant + ≥ 1 lot non-attribué) ]
+
+**Phase Drawing** :
+[ Carte gradient `#1C62ED → #7C3AED` ]
+[ "Tirage en cours..." ]
+[ Nom qui défile (animation roulette via `setInterval`, ~80ms par nom) ]
+
+**Phase Reveal** :
+[ Carte gradient bleue avec ombre glow ]
+[ 🎉 "Gagnant" ]
+[ **Nom du gagnant** (gros) ]
+[ "a gagné **{lot}**" ]
+[ Bouton "Lot suivant" (s'il en reste) ]
+[ Historique des gagnants en dessous ]
+
+**Phase Finished** :
+[ "Terminé" + bouton "Retour au dashboard" ]
+
+ÉCRAN R2 — JOUEUR RAFFLE (`/raffle/[id]`)
+
+**Phase Join** (fond sombre `#1F2937` → `#111827`) :
+[ Logo carré bleu avec 🎁 (animation spring) ]
+[ Titre "Raffle" (`#3B7EFF`) ]
+[ "Participez au tirage au sort !" ]
+[ Input prénom (max 20 chars) + bouton "PARTICIPER" plein bleu ]
+
+**Phase Waiting** :
+[ Cercle pulse (✓) ]
+[ "Vous êtes inscrit !" ]
+[ "{count} participants" ]
+
+**Phase Drawing** :
+[ Spinner ]
+[ "Tirage en cours..." + "Qui sera le gagnant ?" ]
+
+**Phase Reveal** — différenciée :
+- **Si je gagne** : fond gradient `#1C62ED → #7C3AED`, 🎉 géant, "Vous avez gagné !", carte glassmorphism avec le lot
+- **Sinon** : fond sombre, "Le gagnant est..." + nom + lot + "Prochain tirage bientôt..."
+
+**Phase Finished** :
+[ "Merci !" + récap des lots gagnés (si applicable) + résultats complets ]
+
+ÉCRAN R3 — PROJECTION RAFFLE (`/raffle/screen/[id]`)
+
+**Phase Lobby** :
+[ Branding "🎁 Raffle" en haut à gauche ]
+[ QR code géant centré (clamp 200px → 400px) ]
+[ "Scannez pour participer" + URL en clair ]
+[ Pill participants count animée (key=count) ]
+[ Aperçu prochain lot ]
+
+**Phase Drawing** :
+[ "Tirage en cours..." ]
+[ Lot en cours (discret) ]
+[ Carte avec nom géant (clamp 2rem → 5rem) qui change rapidement ]
+
+**Phase Reveal** :
+[ Fond gradient `#1C62ED → #7C3AED` ]
+[ 🎉 géant ]
+[ "Gagnant" puis nom XXL (clamp 3rem → 8rem) ]
+[ Pill "a gagné 🎁 {lot}" ]
+[ Historique des gagnants précédents en bas à droite ]
+
+**Phase Finished** :
+[ 🎉 + "Merci à tous !" + liste complète des résultats animée (stagger 0.15s) ]
+
+Règles UX raffle :
+- Animations Framer Motion (durée 200-500ms, jamais bloquantes)
+- Différenciation visuelle forte gagnant vs perdant côté joueur (gradient vs sombre)
+- Le QR code reste visible pendant les phases lobby ET reveal côté host (pour rejoindre entre deux tirages)
+- L'écran de projection est `100vh` non scrollable, optimisé 16:9
+- Pas de SWAG préchargé : le host saisit les lots à la volée pendant le lobby
 
 📐 RÈGLES GLOBALES UX
 
