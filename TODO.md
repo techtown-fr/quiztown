@@ -8,6 +8,7 @@
 - 🔴 **Bug** -- comportement incorrect, à corriger
 - 🟡 **CRAFT/DRY/KISS** -- qualité de code, refacto
 - 🟢 **Quick win** -- fixable en quelques minutes
+- 🔒 **Sécurité** -- risque résiduel, à durcir
 
 ---
 
@@ -120,6 +121,59 @@
 - [ ] Support `prefers-reduced-motion` dans toutes les animations Framer Motion
 - [ ] Tests unitaires raffle (Vitest)
 - [ ] Tests E2E raffle (Playwright -- host + player + screen synchros)
-- [ ] Durcir les RTDB rules raffle (auth obligatoire pour write hors `participants`)
+- [x] **Durcir les RTDB rules raffle** (auth obligatoire pour write hors `participants`) 🔒
+  Fait mai 2026 : `.write: true` au niveau `$raffleId` supprimé. Désormais seul le host authentifié (`hostId === auth.uid`) peut créer/modifier la raffle. Les non-auth ne peuvent qu'écrire dans `participants/$participantId` (create-only). Mêmes durcissements appliqués à `sessions/$sessionId` et lecture Firestore `quizzes` fermée aux non-`@techtown.fr`.
 - [ ] Confetti côté joueur quand on gagne (déjà mentionné dans le plan, pas implémenté)
 - [ ] Affichage "X autres ont aussi gagné" si plusieurs lots distribués au même joueur
+
+---
+
+## 🔒 Sécurité -- Risques résiduels (post-durcissement rules de mai 2026)
+
+> Les rules Firestore + RTDB ont été durcies (cf. § Plus loin ci-dessus). Il reste deux risques liés au fait que **les joueurs ne sont pas authentifiés Firebase** (le `playerId` est un random `Math.random().toString(36)` côté client).
+
+### Risque 1 -- Usurpation d'identité entre joueurs 🔒
+
+**Symptôme.** Comme le `playerId` n'est pas lié à un `auth.uid`, la rule RTDB pour `sessions/$sid/players/$playerId` autorise n'importe quel client à écrire sur n'importe quel `$playerId`. Un joueur qui devine/voit l'ID d'un autre peut écraser son `nickname`, son `score` ou son `badge`.
+
+**Probabilité.** Faible en pratique : le `playerId` n'est jamais affiché publiquement, il faudrait l'extraire via les devtools d'un autre poste ou via un sniff réseau.
+
+**Correction (~30 min, gratuite).**
+1. Activer Anonymous Auth dans la console Firebase (Authentication → Sign-in method → Anonymous → Enable).
+2. Dans `JoinForm` (ou un wrapper amont), appeler `signInAnonymously(getFirebaseAuth())` avant le `joinSession()`. Aucun écran de login, c'est invisible côté UX.
+3. Dans `PlayerSession.tsx`, remplacer `useState(() => 'player-' + Math.random()...)` par le `user.uid` retourné par l'auth anonyme.
+4. Idem dans `RafflePlayer.tsx` (même pattern de random playerId).
+5. Durcir la rule `sessions/$sid/players/$playerId/.write` :
+   ```
+   "$playerId === auth.uid || data.parent().parent().child('hostId').val() === auth.uid"
+   ```
+   Et symétriquement pour `responses/$qid/$pid/.write` :
+   ```
+   "$playerId === auth.uid && !data.exists()"
+   ```
+   Et pour `raffles/$raffleId/participants/$participantId/.write` :
+   ```
+   "$participantId === auth.uid && !data.exists()"
+   ```
+
+### Risque 2 -- Triche du score côté client 🔒
+
+**Symptôme.** `calculateScore()` dans `src/firebase/realtime.ts` tourne dans le navigateur du joueur, qui appelle ensuite `updatePlayerScore()` avec la valeur calculée. Un utilisateur ouvrant les devtools peut appeler `updatePlayerScore(sid, monUid, 99999999, 999)` et finir premier sans avoir répondu.
+
+**Probabilité.** Moyenne dès qu'il y a un enjeu (prix, classement public). Quasi nulle pour un usage interne entre collègues.
+
+**Correction (~2-3 h, nécessite plan Blaze).**
+1. Mettre à jour le projet Firebase au **plan Blaze** (Cloud Functions impossibles en plan Spark). Coût quasi nul pour ces volumes (free tier généreux).
+2. `firebase init functions` → écrire une fonction TypeScript déclenchée par un trigger RTDB sur `sessions/{sid}/correctOptionId` (`onWrite`).
+3. La fonction lit `sessions/{sid}/responses/{currentQid}`, compare chaque `optionId` à `correctOptionId`, calcule le score avec la formule actuelle, écrit dans `sessions/{sid}/players/{pid}/score` + `streak` via les credentials admin.
+4. Retirer côté client : `calculateScore()` + l'appel à `updatePlayerScore()` dans `PlayerSession.tsx`. Le joueur n'écrit plus que dans `responses/`.
+5. Durcir les rules : interdire `score` et `streak` aux joueurs.
+   ```
+   "score":  { ".write": "data.parent().parent().parent().child('hostId').val() === auth.uid" },
+   "streak": { ".write": "data.parent().parent().parent().child('hostId').val() === auth.uid" }
+   ```
+   (Les Cloud Functions bypassent les rules avec leur token admin, mais ça empêche les joueurs d'écrire directement.)
+
+### Décision actuelle
+
+Pas de correction immédiate -- usage interne TechTown sans enjeu, le rapport effort/risque ne le justifie pas. À reprendre si QuizTown s'ouvre à des événements publics ou si des prix significatifs sont en jeu.

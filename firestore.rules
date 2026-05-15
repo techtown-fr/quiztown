@@ -2,23 +2,23 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Only allow authenticated users with @techtown.fr email
     function isTechTownUser() {
       return request.auth != null
         && request.auth.token.email.matches('.*@techtown[.]fr$');
     }
 
-    // Quizzes: read by anyone, write only by authenticated TechTown hosts
+    // Quiz documents include `correctOptionId` on every question; they must
+    // never be readable by players (who never hit Firestore — questions reach
+    // them sanitized through RTDB during a live session).
     match /quizzes/{quizId} {
-      allow read: if true;
+      allow read: if isTechTownUser();
       allow create: if isTechTownUser();
       allow update, delete: if isTechTownUser()
         && request.auth.uid == resource.data.metadata.authorId;
     }
 
-    // Results: read by host, write by system
     match /results/{resultId} {
-      allow read: if request.auth != null;
+      allow read: if isTechTownUser();
       allow write: if false; // Only Cloud Functions
     }
   }

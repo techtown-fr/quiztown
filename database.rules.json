@@ -3,25 +3,17 @@
     "sessions": {
       "$sessionId": {
         ".read": true,
-        ".write": true,
-        "status": {
-          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
-        },
-        "currentQuestion": {
-          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
-        },
-        "currentQuestionIndex": {
-          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
-        },
+        ".write": "auth != null && (data.child('hostId').val() === auth.uid || newData.child('hostId').val() === auth.uid)",
         "players": {
           "$playerId": {
-            ".write": "!data.exists() || $playerId === auth.uid || data.parent().parent().child('hostId').val() === auth.uid"
+            ".write": "newData.exists()",
+            ".validate": "newData.hasChildren(['id', 'nickname'])"
           }
         },
         "responses": {
           "$questionId": {
             "$playerId": {
-              ".write": "$playerId === auth.uid && !data.exists()",
+              ".write": "!data.exists() && newData.exists()",
               ".validate": "newData.hasChildren(['optionId', 'timestamp'])"
             }
           }
@@ -33,10 +25,10 @@
       ".read": "auth != null && query.orderByChild === 'hostId' && query.equalTo === auth.uid",
       "$raffleId": {
         ".read": true,
-        ".write": true,
+        ".write": "auth != null && (data.child('hostId').val() === auth.uid || newData.child('hostId').val() === auth.uid)",
         "participants": {
           "$participantId": {
-            ".write": true,
+            ".write": "!data.exists() && newData.exists()",
             ".validate": "newData.hasChildren(['id', 'name', 'joinedAt'])"
           }
         }
