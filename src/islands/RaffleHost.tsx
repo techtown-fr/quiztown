@@ -135,7 +135,6 @@ function RecentRafflesList({
           const drawn = r.prizes.filter((p) => p.winnerId).length;
           const total = r.prizes.length;
           const participantCount = Object.keys(r.participants).length;
-          const canDelete = r.status === 'finished';
           return (
             <li key={r.id} style={{ display: 'flex', gap: '0.5rem', alignItems: 'stretch' }}>
               <button
@@ -188,33 +187,31 @@ function RecentRafflesList({
                   {getStatusLabel(r.status, t)}
                 </span>
               </button>
-              {canDelete && (
-                <button
-                  type="button"
-                  onClick={() => onDelete(r.id)}
-                  style={{
-                    padding: '0 0.85rem',
-                    background: '#FFFFFF',
-                    border: '1px solid #E5E7EB',
-                    borderRadius: '0.75rem',
-                    color: 'var(--color-alert-coral, #FB7185)',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'border-color 0.15s, color 0.15s',
-                    flexShrink: 0,
-                  }}
-                  aria-label={`${t.deleteRaffle} -- ${dateFmt.format(r.createdAt)}`}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                    <path d="M10 11v6M14 11v6" />
-                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                  </svg>
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => onDelete(r.id)}
+                style={{
+                  padding: '0 0.85rem',
+                  background: '#FFFFFF',
+                  border: '1px solid #E5E7EB',
+                  borderRadius: '0.75rem',
+                  color: 'var(--color-alert-coral, #FB7185)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'border-color 0.15s, color 0.15s',
+                  flexShrink: 0,
+                }}
+                aria-label={`${t.deleteRaffle} -- ${dateFmt.format(r.createdAt)}`}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                  <path d="M10 11v6M14 11v6" />
+                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                </svg>
+              </button>
             </li>
           );
         })}
