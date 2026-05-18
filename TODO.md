@@ -45,6 +45,18 @@
 
 ---
 
+## 🎨 UI / Layout
+
+- [ ] **Host -- panneau "Question en cours" : libellés de réponses qui débordent** 🟢
+  Vue host (`HostLiveControl.tsx`, bloc "Question en cours" affiché à côté du timer `XX sec` et du bouton "Afficher les résultats"). Sur desktop, les 4 cartes de réponses sont en grille 2×2 dans un conteneur étroit alors que la zone parent a encore de l'espace libre à droite. Résultat : "Un IDE conçu pour l'ère 'agent-first'" et "Une base de données vectorielle" débordent visuellement de leur carte (le texte sort du fond coloré au lieu de wrapper ou tronquer).
+  → À faire :
+  1. Élargir le conteneur de la question (utiliser la largeur disponible -- pas de `max-w-*` trop restrictif).
+  2. Tronquer avec `...` les libellés qui restent trop longs après élargissement (`text-overflow: ellipsis; overflow: hidden; white-space: nowrap;` ou clamp 2 lignes max).
+  3. En mode mobile (`< md` Tailwind / `< 768px`), passer la grille 2×2 en pile verticale (1 colonne -- `grid-cols-1`) pour que chaque réponse ait toute la largeur.
+  4. Vérifier que `aria-label` (pictogramme + lettre) reste lisible même si le texte est tronqué (l'accessibilité ne doit pas dépendre du texte visible).
+
+---
+
 ## 🎨 CRAFT -- Design tokens & alignement brand TechTown
 
 > `AGENTS.md` (mai 2026) délègue désormais le design system au skill `.agents/skills/techtown-brand-guidelines`.
