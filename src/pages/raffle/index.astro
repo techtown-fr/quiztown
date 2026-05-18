@@ -1,0 +1,17 @@
+---
+import GameLayout from '../../layouts/GameLayout.astro';
+import RafflePlayer from '../../islands/RafflePlayer';
+import { getLang } from '../../i18n';
+
+const lang = getLang(Astro);
+
+// Static page; the actual raffle ID is read from the URL at runtime
+// (`?id=` or `/raffle/{id}` path segment, see `src/lib/raffleUrl.ts`).
+// Firebase Hosting rewrite `/raffle/**` -> `/raffle/index.html` serves this
+// page for any sub-path. The `/raffle/screen/**` rewrite must be declared
+// BEFORE `/raffle/**` so the screen variant wins.
+---
+
+<GameLayout title="QuizTown - Raffle">
+  <RafflePlayer lang={lang} client:load />
+</GameLayout>

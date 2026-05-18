@@ -100,7 +100,7 @@ export default function PlayerSession({ lang }: Props): React.JSX.Element {
     // Fallback: read from path /play/{sessionId}
     const pathParts = window.location.pathname.split('/').filter(Boolean);
     const playIdx = pathParts.indexOf('play');
-    if (playIdx !== -1 && pathParts[playIdx + 1] && pathParts[playIdx + 1] !== 'demo') {
+    if (playIdx !== -1 && pathParts[playIdx + 1]) {
       setSessionId(pathParts[playIdx + 1]);
       return;
     }

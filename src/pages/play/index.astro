@@ -1,0 +1,16 @@
+---
+import GameLayout from '../../layouts/GameLayout.astro';
+import PlayerSession from '../../islands/PlayerSession';
+import { getLang } from '../../i18n';
+
+const lang = getLang(Astro);
+
+// Static page; the actual session ID is read from the URL at runtime by
+// PlayerSession (`?session=` query param or `/play/{sessionId}` path segment).
+// Firebase Hosting rewrite `/play/**` -> `/play/index.html` serves this page
+// for any sub-path so QR codes / share links work without a per-session build.
+---
+
+<GameLayout title="QuizTown - Join">
+  <PlayerSession lang={lang} client:load />
+</GameLayout>

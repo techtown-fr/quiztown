@@ -73,51 +73,51 @@
     "rewrites": [
       {
         "source": "/play/**",
-        "destination": "/play/demo.html"
+        "destination": "/play/index.html"
       },
       {
         "source": "/en/play/**",
-        "destination": "/en/play/demo.html"
+        "destination": "/en/play/index.html"
       },
       {
         "source": "/host/live/**",
-        "destination": "/host/live.html"
+        "destination": "/host/live/index.html"
       },
       {
         "source": "/en/host/live/**",
-        "destination": "/en/host/live.html"
+        "destination": "/en/host/live/index.html"
       },
       {
         "source": "/host/edit/**",
-        "destination": "/host/edit.html"
+        "destination": "/host/edit/index.html"
       },
       {
         "source": "/en/host/edit/**",
-        "destination": "/en/host/edit.html"
+        "destination": "/en/host/edit/index.html"
       },
       {
         "source": "/screen/**",
-        "destination": "/screen/demo.html"
+        "destination": "/screen/index.html"
       },
       {
         "source": "/en/screen/**",
-        "destination": "/en/screen/demo.html"
+        "destination": "/en/screen/index.html"
       },
       {
         "source": "/raffle/screen/**",
-        "destination": "/raffle/screen/demo/index.html"
+        "destination": "/raffle/screen/index.html"
       },
       {
         "source": "/en/raffle/screen/**",
-        "destination": "/en/raffle/screen/demo/index.html"
+        "destination": "/en/raffle/screen/index.html"
       },
       {
         "source": "/raffle/**",
-        "destination": "/raffle/demo/index.html"
+        "destination": "/raffle/index.html"
       },
       {
         "source": "/en/raffle/**",
-        "destination": "/en/raffle/demo/index.html"
+        "destination": "/en/raffle/index.html"
       },
       {
         "source": "!/@(api|_astro|images|fonts|*.@(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|webp|avif|json|xml|txt))",

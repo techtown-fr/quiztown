@@ -53,7 +53,7 @@ function HostLiveContent({ sessionId: propSessionId, lang }: Props): React.JSX.E
   useEffect(() => {
     if (sessionId) {
       const origin = typeof window !== 'undefined' ? window.location.origin : '';
-      setJoinUrl(`${origin}/play/demo?session=${sessionId}`);
+      setJoinUrl(`${origin}/play?session=${sessionId}`);
     }
   }, [sessionId]);
 

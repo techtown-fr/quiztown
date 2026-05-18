@@ -1,12 +1,6 @@
 ---
 import GameLayout from '../../layouts/GameLayout.astro';
 import PublicScreen from '../../islands/PublicScreen';
-
-const { id } = Astro.params;
-
-export function getStaticPaths() {
-  return [{ params: { id: 'demo' } }];
-}
 ---
 
 <GameLayout title="QuizTown - Live Screen">

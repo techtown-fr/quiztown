@@ -72,7 +72,7 @@ Session state machine: `lobby` → `question` → `feedback` → `leaderboard` �
 
 - **Host** (`HostLivePage` + `HostLiveControl`): creates session in lobby (shows QR + join URL), starts quiz, controls reveal / next / finish.
 - **Player** (`PlayerSession` orchestrates `JoinForm` → `WaitingRoom` → `PlayerBuzzer` → `FeedbackScreen` → `Leaderboard`): reads `?session=` query, registers via `joinSession()`, listens with `onSessionChange()`, submits via `submitResponse()`.
-- `firebase.json` rewrites: `/play/**` → `/play/demo.html`, `/host/live/**` → `/host/live.html`.
+- `firebase.json` rewrites: every dynamic route (`/play/**`, `/host/live/**`, `/host/edit/**`, `/screen/**`, `/raffle/**`, `/raffle/screen/**`) points to its `…/index.html`. The corresponding Astro pages are static `index.astro` (no `[id].astro`); the real session/raffle ID is read at runtime from `?session=` / `?id=` or the path segment.
 
 ### Animations & Accessibility
 

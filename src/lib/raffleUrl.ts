@@ -2,13 +2,14 @@
  * URL helpers for the raffle feature.
  *
  * Why client-side parsing?
- * The `[id].astro` pages are statically pre-rendered for `id = 'demo'` only.
- * In production, Firebase Hosting rewrites `/raffle/{realId}` to that demo
- * HTML, so the real ID lives only in `window.location` at runtime.
+ * The `index.astro` pages are statically pre-rendered with no dynamic param.
+ * In production, Firebase Hosting rewrites `/raffle/{realId}` (and any
+ * `/raffle/**` sub-path) to `/raffle/index.html`, so the real ID lives only
+ * in `window.location` at runtime.
  *
- * Both the `?id=` query param and the path segment are supported (the dev
- * preview at `/raffle/demo?id=xxx` uses the query, the prod rewrite uses
- * the path).
+ * Both the `?id=` query param and the path segment are supported (the host
+ * generates `?id=` URLs, but a user landing on `/raffle/{id}` also works
+ * thanks to the wildcard rewrite).
  */
 
 // "/raffle/{id}" but NOT "/raffle/screen/..."
@@ -17,10 +18,10 @@ const RAFFLE_SCREEN_PATH_RE = /\/raffle\/screen\/([^/?#]+)/;
 
 function extractId(re: RegExp, pathname: string, search: string): string | null {
   const fromQuery = new URLSearchParams(search).get('id');
-  if (fromQuery && fromQuery !== 'demo') return fromQuery;
+  if (fromQuery) return fromQuery;
 
   const match = pathname.match(re);
-  if (match && match[1] && match[1] !== 'demo') return match[1];
+  if (match && match[1]) return match[1];
 
   return null;
 }

@@ -40,9 +40,8 @@
   `pathParts.indexOf('raffle')` puis `pathParts[idx+1]` : casse si l'URL a un préfixe inattendu.
   → Centralisé dans `src/lib/raffleUrl.ts` (`getRaffleIdFromLocation`, `getRaffleScreenIdFromLocation`) avec une regex qui exclut explicitement `/raffle/screen/...` du player path. Pas de prop Astro car les pages sont pré-rendues uniquement avec `id=demo` (Firebase rewrite gère la dynamique).
 
-- [ ] **Inconsistance des rewrites Firebase** 🟡 (préexistant, pas introduit par le raffle)
-  `firebase.json` rewrite `/play/demo.html` mais Astro génère `/play/demo/index.html`. Le raffle utilise la bonne forme.
-  → Auditer et harmoniser.
+- [x] **Inconsistance des rewrites Firebase** 🟡 (préexistant, pas introduit par le raffle)
+  Fait mai 2026 : tous les `[id].astro` (play / screen / raffle / raffle/screen / host/live) remplacés par `index.astro` (le `host/live/[id].astro` faisait doublon avec `host/live/index.astro`). `firebase.json` pointe maintenant uniformément vers `…/index.html`. Le placeholder `demo` disparaît côté URL : les hosts génèrent `/play?session=…` et `/raffle?id=…` (au lieu de `/play/demo?session=…`). Côté parsing (`PlayerSession`, `raffleUrl`), l'exclusion `!== 'demo'` n'a plus lieu d'être.
 
 ---
 

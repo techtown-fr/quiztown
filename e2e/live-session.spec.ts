@@ -139,7 +139,7 @@ test.describe.serial('Live session flow', () => {
 
     // Extract the join URL for the player
     joinUrl = await joinUrlElement.textContent() ?? '';
-    expect(joinUrl).toContain('/play/demo?session=');
+    expect(joinUrl).toContain('/play?session=');
 
     // Verify copy button
     await expect(hostPage.getByRole('button', { name: /Copier|Copy/ })).toBeVisible();

@@ -260,8 +260,8 @@ function RaffleHostContent({ lang }: Props): React.JSX.Element {
   }, []);
 
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
-  const joinUrl = raffleId ? `${origin}/raffle/demo?id=${raffleId}` : '';
-  const screenUrl = raffleId ? `${origin}/raffle/screen/demo?id=${raffleId}` : '';
+  const joinUrl = raffleId ? `${origin}/raffle?id=${raffleId}` : '';
+  const screenUrl = raffleId ? `${origin}/raffle/screen?id=${raffleId}` : '';
   const qrDataUrl = useQrCode(joinUrl, { width: 200, dark: '#1C62ED' });
 
   // ==========================================
