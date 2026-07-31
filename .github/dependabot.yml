@@ -23,7 +23,7 @@ updates:
       interval: "monthly"
     labels:
       - "dependencies"
-      - "[ ci/cd ]"
+      - "ci/cd"
     commit-message:
       prefix: "⬆️"
     groups:
