@@ -596,7 +596,7 @@ function QuestionPreview({
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
           gap: '0.5rem',
         }}
       >
@@ -651,9 +651,7 @@ function QuestionPreview({
                   fontSize: '0.85rem',
                   fontWeight: isCorrect ? 600 : 400,
                   color: 'var(--color-dark-slate)',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
+                  overflowWrap: 'anywhere',
                 }}
               >
                 {option.text}
