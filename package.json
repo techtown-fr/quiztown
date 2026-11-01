@@ -24,7 +24,7 @@
     "@giphy/js-fetch-api": "^5.8.0",
     "astro": "^7.3.6",
     "astro-icon": "^1.2.0",
-    "firebase": "^12.19.0",
+    "firebase": "^13.1.0",
     "framer-motion": "^12.38.0",
     "qrcode": "^1.5.4",
     "react": "^19.3.0",
